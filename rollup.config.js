@@ -21,14 +21,28 @@ export default [
       {
         file: path.resolve(__dirname, `./dist/${pkg.name}.cjs.js`),
         format: 'cjs'
-      },
-      {
-        file: path.resolve(__dirname, `./dist/${pkg.name}.js`),
-        format: 'umd',
-        name: 'WebMonitor'
       }
     ],
-    plugins: [typescript()]
+    plugins: [typescript(), terser({
+      format: {
+        beautify: true,
+        braces: true
+      }
+    }),]
+  },
+  {
+    input: './src/index.ts',
+    output: {
+      file: path.resolve(__dirname, `./dist/${pkg.name}.js`),
+      format: 'umd',
+      name: 'WebMonitor'
+    },
+    plugins: [nodeResolve(), typescript(), terser(), babel({
+      exclude: /node_modules/,
+      extensions: ['.js', '.ts'],
+      babelHelpers: 'runtime',
+      plugins: [['@babel/plugin-transform-runtime']]
+    })]
   },
   {
     input: './src/index.ts',

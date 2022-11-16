@@ -1,97 +1,64 @@
-'use strict'
+"use strict";
 
-class WebMonitor {
-  constructor(config) {
-    this.config = Object.assign(this.normalizeConfig(), config)
-    this.domConfig = this.normalizeDomConfig()
-    window.$monitorConfig = this.config
-  }
-  normalizeConfig() {
-    return {
-      domMonitor: false
+module.exports = class {
+    constructor(t) {
+        this.config = Object.assign(this.normalizeConfig(), t), this.domConfig = this.normalizeDomConfig(), 
+        window.$monitorConfig = this.config;
     }
-  }
-  normalizeDomConfig() {
-    return {
-      visibility: true,
-      root: null,
-      threshold: 0.2,
-      event: true,
-      eventListeners: ['click']
+    normalizeConfig() {
+        return {
+            domMonitor: !1
+        };
     }
-  }
-  /**
-   * A method to report event.
-   * @param key event key
-   * @param value event value
-   * @param type blob data type
-   */
-  reportEvent(key, value, type) {
-    const url = this.config.sendUrl
-    const data = {
-      key,
-      value
+    normalizeDomConfig() {
+        return {
+            visibility: !0,
+            root: null,
+            threshold: .2,
+            event: !0,
+            eventListeners: [ "click" ]
+        };
     }
-    const blobData = new Blob([JSON.stringify(data)], {
-      type: type ? type : 'application/x-www-form-urlencoded'
-    })
-    navigator.sendBeacon(url, blobData)
-  }
-  /**
-   * Create a DOM observer
-   */
-  createDOMMonitor(domConfig) {
-    if (this.config.domMonitor === false) return
-    this.domConfig = Object.assign(this.domConfig, domConfig)
-    this.eventMonitor()
-    this.visibilityMonitor()
-  }
-  eventMonitor() {
-    if (this.domConfig.event === false) return
-    this.domConfig.eventListeners.forEach((eventType) => {
-      window.document.body.addEventListener(
-        eventType,
-        (e) => {
-          const target = e.target
-          const value = target.getAttribute('data-click')
-          this.reportEvent(eventType, value)
-        },
-        {
-          capture: true
+    reportEvent(t, o, e) {
+        const i = this.config.sendUrl, n = {
+            key: t,
+            value: o
+        }, r = new Blob([ JSON.stringify(n) ], {
+            type: e || "application/x-www-form-urlencoded"
+        });
+        navigator.sendBeacon(i, r);
+    }
+    createDOMMonitor(t) {
+        !1 !== this.config.domMonitor && (this.domConfig = Object.assign(this.domConfig, t), 
+        this.eventMonitor(), this.visibilityMonitor());
+    }
+    eventMonitor() {
+        !1 !== this.domConfig.event && this.domConfig.eventListeners.forEach((t => {
+            window.document.body.addEventListener(t, (o => {
+                const e = o.target.getAttribute("data-click");
+                this.reportEvent(t, e);
+            }), {
+                capture: !0
+            });
+        }));
+    }
+    visibilityMonitor() {
+        const {root: t, threshold: o} = this.domConfig, e = new IntersectionObserver((t => {
+            t.forEach((t => {
+                const {intersectionRatio: e, target: i} = t;
+                i.hasAttribute("data-expose") && e >= o && this.reportEvent("expose", i.getAttribute("data-expose"));
+            }));
+        }), {
+            root: t,
+            threshold: o
+        });
+        this.traverseNode(t, e);
+    }
+    traverseNode(t, o) {
+        if (t) {
+            for (const e of t.children) {
+                e.hasAttribute("data-expose") && o.observe(e), e.children.length && this.traverseNode(e, o);
+            }
         }
-      )
-    })
-  }
-  visibilityMonitor() {
-    const { root, threshold } = this.domConfig
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const { intersectionRatio, target } = entry
-          if (!target.hasAttribute('data-expose')) return
-          if (intersectionRatio >= threshold) {
-            this.reportEvent('expose', target.getAttribute('data-expose'))
-          }
-        })
-      },
-      {
-        root,
-        threshold
-      }
-    )
-    this.traverseNode(root, observer)
-  }
-  traverseNode(root, observer) {
-    if (!root) return
-    for (const node of root.children) {
-      if (node.hasAttribute('data-expose')) {
-        observer.observe(node)
-      }
-      if (node.children.length) {
-        this.traverseNode(node, observer)
-      }
     }
-  }
-}
-
-module.exports = WebMonitor
+};
