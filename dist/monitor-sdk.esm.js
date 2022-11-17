@@ -1,16 +1,16 @@
-function t(t, e, o, i) {
-    const n = {
-        key: e,
-        value: o
-    }, r = new Blob([ JSON.stringify(n) ], {
-        type: i || "application/x-www-form-urlencoded"
+function e(e, o, t, n) {
+    const r = {
+        key: o,
+        value: t
+    }, i = new Blob([ JSON.stringify(r) ], {
+        type: n || "application/x-www-form-urlencoded"
     });
-    navigator.sendBeacon(t, r);
+    navigator.sendBeacon(e, i);
 }
 
-class e {
-    constructor(t, e) {
-        this.url = t, this.domConfig = Object.assign(this.normalizeDomConfig(), e), this.eventMonitor(), 
+class o {
+    constructor(e, o) {
+        this.url = e, this.domConfig = Object.assign(this.normalizeDomConfig(), o), this.eventMonitor(), 
         this.visibilityMonitor();
     }
     normalizeDomConfig() {
@@ -26,59 +26,77 @@ class e {
         if (!1 === this.domConfig.event) {
             return;
         }
-        const {root: e} = this.domConfig;
-        e && this.domConfig.eventListeners.forEach((o => {
-            e.addEventListener(o, (e => {
-                const i = e.target.getAttribute("data-click") || "";
-                t(this.url, o, i);
+        const {root: o} = this.domConfig;
+        o && this.domConfig.eventListeners.forEach((t => {
+            o.addEventListener(t, (o => {
+                const n = o.target.getAttribute("data-click") || "";
+                e(this.url, t, n);
             }), {
                 capture: !0
             });
         }));
     }
     visibilityMonitor() {
-        const {root: e, threshold: o} = this.domConfig, i = new IntersectionObserver((e => {
-            e.forEach((e => {
-                const {intersectionRatio: i, target: n} = e;
-                if (n.hasAttribute("data-expose") && i >= o) {
-                    const e = n.getAttribute("data-expose") || "";
-                    t(this.url, "expose", e);
+        const {root: o, threshold: t} = this.domConfig, n = new IntersectionObserver((o => {
+            o.forEach((o => {
+                const {intersectionRatio: n, target: r} = o;
+                if (r.hasAttribute("data-expose") && n >= t) {
+                    const o = r.getAttribute("data-expose") || "";
+                    e(this.url, "expose", o);
                 }
             }));
         }), {
-            root: e,
-            threshold: o
+            root: o,
+            threshold: t
         });
-        this.traverseNode(e, i);
+        this.traverseNode(o, n);
     }
-    traverseNode(t, e) {
-        if (t) {
-            for (const o of t.children) {
-                o.hasAttribute("data-expose") && e.observe(o), o.children.length && this.traverseNode(o, e);
+    traverseNode(e, o) {
+        if (e) {
+            for (const t of e.children) {
+                t.hasAttribute("data-expose") && o.observe(t), t.children.length && this.traverseNode(t, o);
             }
         }
     }
 }
 
-class o {
-    constructor(e) {
-        this.config = Object.assign(this.normalizeConfig(), e), window.$monitorConfig = this.config;
-        const {url: o, jsError: i, resource: n} = this.config;
-        i && function(e) {
-            window.addEventListener("error", (o => {
-                const {message: i, type: n, lineno: r, colno: s, error: a} = o;
-                t(e, n, {
-                    message: i,
-                    lineno: r,
+function t() {
+    window.performance ? n() : window.onload = e => {
+        console.log(e);
+    };
+}
+
+function n() {
+    new PerformanceObserver((e => {})).observe({
+        entryTypes: [ "resource" ]
+    });
+    let e = performance.getEntriesByType("resource");
+    e = e.filter((e => "beacon" !== e.initiatorType));
+    for (const o of e) {
+        console.log("entry", o);
+    }
+    performance.clearResourceTimings(), setTimeout(n, 2e3);
+}
+
+class r {
+    constructor(o) {
+        this.config = Object.assign(this.normalizeConfig(), o), window.$monitorConfig = this.config;
+        const {url: n, jsError: r, resource: i} = this.config;
+        r && function(o) {
+            window.addEventListener("error", (t => {
+                const {message: n, type: r, lineno: i, colno: s, error: c} = t;
+                e(o, r, {
+                    message: n,
+                    lineno: i,
                     colno: s,
-                    stack: a.stack
+                    stack: c.stack
                 });
-            })), window.addEventListener("unhandledrejection", (o => {
-                t(e, o.type, {
-                    reason: o.reason
+            })), window.addEventListener("unhandledrejection", (t => {
+                e(o, t.type, {
+                    reason: t.reason
                 });
             }));
-        }(o);
+        }(n), i && t();
     }
     normalizeConfig() {
         return {
@@ -88,9 +106,9 @@ class o {
             url: ""
         };
     }
-    createDOMMonitor(t) {
-        return new e(this.config.url, t), this;
+    createDOMMonitor(e) {
+        return new o(this.config.url, e), this;
     }
 }
 
-export { o as default };
+export { r as default };

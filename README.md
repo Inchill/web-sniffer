@@ -8,7 +8,8 @@ A web monitor jssdk. It has below functionalities:
 - **Performance Monitor**: Monitor page performance including FP, FCP, LCP, DCL etc.
 - **Network Monitor**: Monitor network.
 - **URL Monitor**: Monitor url changes.
-- **Custom Monitor**: Provide custom methods to monitor specific things.
+- **Memory Monitor**: Monitor memory leak.
+- **Custom behaviour Monitor**: Provide custom methods to monitor specific behaviour like PV, UV etc.
 
 ## Install
 

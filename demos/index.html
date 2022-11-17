@@ -6,34 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="../dist/monitor-sdk.min.js"></script>
-    <style>
-      #root {
-        display: inline-block;
-        height: 90px;
-        overflow: scroll;
-        border: 1px solid orange;
-      }
-      .box {
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-        border: 1px solid orange;
-        overflow: scroll;
-      }
-      .box > div {
-        width: 200px;
-        height: 100px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .inner1 {
-        background-color: antiquewhite;
-      }
-      .inner2 {
-        background-color: darkcyan;
-      }
-    </style>
+    <link rel="stylesheet" href="./index.css">
   </head>
   <body>
     <div id="root">
@@ -55,8 +28,7 @@
     </div>
     <script>
       new WebMonitor({
-        sendUrl: 'http://127.0.0.1:8080',
-        domMonitor: true
+        url: 'http://127.0.0.1:8080'
       }).createDOMMonitor({
         visibilty: true,
         root: document.querySelector('#root')

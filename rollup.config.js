@@ -37,7 +37,7 @@ export default [
       format: 'umd',
       name: 'WebMonitor'
     },
-    plugins: [nodeResolve(), typescript(), terser(), babel({
+    plugins: [nodeResolve(), typescript(), babel({
       exclude: /node_modules/,
       extensions: ['.js', '.ts'],
       babelHelpers: 'runtime',

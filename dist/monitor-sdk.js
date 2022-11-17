@@ -1,1 +1,238 @@
-!function(e,t){"object"==typeof exports&&"undefined"!=typeof module?module.exports=t():"function"==typeof define&&define.amd?define(t):(e="undefined"!=typeof globalThis?globalThis:e||self).WebMonitor=t()}(this,(function(){"use strict";function e(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}function t(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}function n(e,n,r){return n&&t(e.prototype,n),r&&t(e,r),Object.defineProperty(e,"prototype",{writable:!1}),e}function r(e,t,n,r){var o={key:t,value:n},i=new Blob([JSON.stringify(o)],{type:r||"application/x-www-form-urlencoded"});navigator.sendBeacon(e,i)}function o(e,t){var n="undefined"!=typeof Symbol&&e[Symbol.iterator]||e["@@iterator"];if(!n){if(Array.isArray(e)||(n=function(e,t){if(!e)return;if("string"==typeof e)return i(e,t);var n=Object.prototype.toString.call(e).slice(8,-1);"Object"===n&&e.constructor&&(n=e.constructor.name);if("Map"===n||"Set"===n)return Array.from(e);if("Arguments"===n||/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n))return i(e,t)}(e))||t&&e&&"number"==typeof e.length){n&&(e=n);var r=0,o=function(){};return{s:o,n:function(){return r>=e.length?{done:!0}:{done:!1,value:e[r++]}},e:function(e){throw e},f:o}}throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.")}var a,u=!0,f=!1;return{s:function(){n=n.call(e)},n:function(){var e=n.next();return u=e.done,e},e:function(e){f=!0,a=e},f:function(){try{u||null==n.return||n.return()}finally{if(f)throw a}}}}function i(e,t){(null==t||t>e.length)&&(t=e.length);for(var n=0,r=new Array(t);n<t;n++)r[n]=e[n];return r}var a=function(){function t(n,r){e(this,t),this.url=n,this.domConfig=Object.assign(this.normalizeDomConfig(),r),this.eventMonitor(),this.visibilityMonitor()}return n(t,[{key:"normalizeDomConfig",value:function(){return{visibility:!0,root:null,threshold:.2,event:!0,eventListeners:["click"]}}},{key:"eventMonitor",value:function(){var e=this;if(!1!==this.domConfig.event){var t=this.domConfig.root;t&&this.domConfig.eventListeners.forEach((function(n){t.addEventListener(n,(function(t){var o=t.target.getAttribute("data-click")||"";r(e.url,n,o)}),{capture:!0})}))}}},{key:"visibilityMonitor",value:function(){var e=this,t=this.domConfig,n=t.root,o=t.threshold,i=new IntersectionObserver((function(t){t.forEach((function(t){var n=t.intersectionRatio,i=t.target;if(i.hasAttribute("data-expose")&&n>=o){var a=i.getAttribute("data-expose")||"";r(e.url,"expose",a)}}))}),{root:n,threshold:o});this.traverseNode(n,i)}},{key:"traverseNode",value:function(e,t){if(e){var n,r=o(e.children);try{for(r.s();!(n=r.n()).done;){var i=n.value;i.hasAttribute("data-expose")&&t.observe(i),i.children.length&&this.traverseNode(i,t)}}catch(e){r.e(e)}finally{r.f()}}}}]),t}();return function(){function t(n){e(this,t),this.config=Object.assign(this.normalizeConfig(),n),window.$monitorConfig=this.config;var o=this.config,i=o.url,a=o.jsError;o.resource,a&&function(e){window.addEventListener("error",(function(t){var n=t.message,o=t.type,i=t.lineno,a=t.colno,u=t.error;r(e,o,{message:n,lineno:i,colno:a,stack:u.stack})})),window.addEventListener("unhandledrejection",(function(t){r(e,t.type,{reason:t.reason})}))}(i)}return n(t,[{key:"normalizeConfig",value:function(){return{domMonitor:!1,jsError:!0,resource:!0,url:""}}},{key:"createDOMMonitor",value:function(e){return new a(this.config.url,e),this}}]),t}()}));
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.WebMonitor = factory());
+})(this, (function () { 'use strict';
+
+  function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+      throw new TypeError("Cannot call a class as a function");
+    }
+  }
+
+  function _defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];
+      descriptor.enumerable = descriptor.enumerable || false;
+      descriptor.configurable = true;
+      if ("value" in descriptor) descriptor.writable = true;
+      Object.defineProperty(target, descriptor.key, descriptor);
+    }
+  }
+  function _createClass(Constructor, protoProps, staticProps) {
+    if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+    if (staticProps) _defineProperties(Constructor, staticProps);
+    Object.defineProperty(Constructor, "prototype", {
+      writable: false
+    });
+    return Constructor;
+  }
+
+  /**
+   * A method to send data.
+   * @param url API url
+   * @param key report key
+   * @param value report value
+   * @param type blob type
+   */
+  function reportEvent(url, key, value, type) {
+    var data = {
+      key: key,
+      value: value
+    };
+    var blobData = new Blob([JSON.stringify(data)], {
+      type: type ? type : 'application/x-www-form-urlencoded'
+    });
+    navigator.sendBeacon(url, blobData);
+  }
+
+  function createJsErrorMonitor(url) {
+    window.addEventListener('error', function (e) {
+      var message = e.message,
+        type = e.type,
+        lineno = e.lineno,
+        colno = e.colno,
+        error = e.error;
+      reportEvent(url, type, {
+        message: message,
+        lineno: lineno,
+        colno: colno,
+        stack: error.stack
+      });
+    });
+    window.addEventListener('unhandledrejection', function (e) {
+      reportEvent(url, e.type, {
+        reason: e.reason
+      });
+    });
+  }
+
+  function _createForOfIteratorHelper$1(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray$1(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+  function _unsupportedIterableToArray$1(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$1(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$1(o, minLen); }
+  function _arrayLikeToArray$1(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+  var DomMonitor = /*#__PURE__*/function () {
+    function DomMonitor(url, domConfig) {
+      _classCallCheck(this, DomMonitor);
+      this.url = url;
+      this.domConfig = Object.assign(this.normalizeDomConfig(), domConfig);
+      this.eventMonitor();
+      this.visibilityMonitor();
+    }
+    _createClass(DomMonitor, [{
+      key: "normalizeDomConfig",
+      value: function normalizeDomConfig() {
+        return {
+          visibility: true,
+          root: null,
+          threshold: 0.2,
+          event: true,
+          eventListeners: ['click']
+        };
+      }
+    }, {
+      key: "eventMonitor",
+      value: function eventMonitor() {
+        var _this = this;
+        if (this.domConfig.event === false) return;
+        var root = this.domConfig.root;
+        if (!root) return;
+        this.domConfig.eventListeners.forEach(function (eventType) {
+          root.addEventListener(eventType, function (e) {
+            var target = e.target;
+            var value = target.getAttribute('data-click') || '';
+            reportEvent(_this.url, eventType, value);
+          }, {
+            capture: true
+          });
+        });
+      }
+    }, {
+      key: "visibilityMonitor",
+      value: function visibilityMonitor() {
+        var _this2 = this;
+        var _this$domConfig = this.domConfig,
+          root = _this$domConfig.root,
+          threshold = _this$domConfig.threshold;
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            var intersectionRatio = entry.intersectionRatio,
+              target = entry.target;
+            if (!target.hasAttribute('data-expose')) return;
+            if (intersectionRatio >= threshold) {
+              var value = target.getAttribute('data-expose') || '';
+              reportEvent(_this2.url, 'expose', value);
+            }
+          });
+        }, {
+          root: root,
+          threshold: threshold
+        });
+        this.traverseNode(root, observer);
+      }
+    }, {
+      key: "traverseNode",
+      value: function traverseNode(root, observer) {
+        if (!root) return;
+        var _iterator = _createForOfIteratorHelper$1(root.children),
+          _step;
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var node = _step.value;
+            if (node.hasAttribute('data-expose')) {
+              observer.observe(node);
+            }
+            if (node.children.length) {
+              this.traverseNode(node, observer);
+            }
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+      }
+    }]);
+    return DomMonitor;
+  }();
+
+  function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+  function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+  function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+  function createResourceMonitor() {
+    if (window.performance) {
+      performanceWatch();
+    } else {
+      listenOnload();
+    }
+  }
+  function performanceWatch() {
+    var perfObserver = new PerformanceObserver(function (list) {
+      // console.log(111, list.getEntries())
+    });
+    perfObserver.observe({
+      entryTypes: ['resource']
+    });
+    var entries = performance.getEntriesByType('resource');
+    // filter sendBeacon requests
+    entries = entries.filter(function (entry) {
+      return entry.initiatorType !== 'beacon';
+    });
+    var _iterator = _createForOfIteratorHelper(entries),
+      _step;
+    try {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var entry = _step.value;
+        console.log('entry', entry);
+      }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
+    }
+    performance.clearResourceTimings();
+    setTimeout(performanceWatch, 2000);
+  }
+  function listenOnload() {
+    window.onload = function (e) {
+      console.log(e);
+    };
+  }
+
+  var WebMonitor = /*#__PURE__*/function () {
+    function WebMonitor(config) {
+      _classCallCheck(this, WebMonitor);
+      this.config = Object.assign(this.normalizeConfig(), config);
+      window.$monitorConfig = this.config;
+      var _this$config = this.config,
+        url = _this$config.url,
+        jsError = _this$config.jsError,
+        resource = _this$config.resource;
+      jsError && createJsErrorMonitor(url);
+      resource && createResourceMonitor();
+    }
+    _createClass(WebMonitor, [{
+      key: "normalizeConfig",
+      value: function normalizeConfig() {
+        return {
+          domMonitor: false,
+          jsError: true,
+          resource: true,
+          url: ''
+        };
+      }
+      /**
+       * Create a DOM observer
+       */
+    }, {
+      key: "createDOMMonitor",
+      value: function createDOMMonitor(domConfig) {
+        new DomMonitor(this.config.url, domConfig);
+        return this;
+      }
+    }]);
+    return WebMonitor;
+  }();
+
+  return WebMonitor;
+
+}));

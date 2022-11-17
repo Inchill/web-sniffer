@@ -1,6 +1,7 @@
 import { Config, DOMConfig } from './types/index'
 import { createJsErrorMonitor } from './js/index'
 import DomMonitor from './dom/index'
+import { createResourceMonitor } from './resource/index'
 export default class WebMonitor {
   public config: Config
 
@@ -15,6 +16,7 @@ export default class WebMonitor {
     } = this.config
 
     jsError && createJsErrorMonitor(url)
+    resource && createResourceMonitor()
   }
 
   private normalizeConfig() {

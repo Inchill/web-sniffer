@@ -1,0 +1,26 @@
+#root, #app {
+  display: inline-block;
+  height: 90px;
+  overflow: scroll;
+  border: 1px solid orange;
+}
+.box {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  border: 1px solid orange;
+  overflow: scroll;
+}
+.box > div {
+  width: 200px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.inner1 {
+  background-color: antiquewhite;
+}
+.inner2 {
+  background-color: darkcyan;
+}

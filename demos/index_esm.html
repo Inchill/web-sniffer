@@ -6,42 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Document</title>
-  <style>
-    body {
-      height: 100vh;
-    }
-
-    #root, #app {
-      display: inline-block;
-      height: 90px;
-      overflow: scroll;
-      border: 1px solid orange;
-    }
-
-    .box {
-      display: flex;
-      flex-direction: column;
-      box-sizing: border-box;
-      border: 1px solid orange;
-      overflow: scroll;
-    }
-
-    .box>div {
-      width: 200px;
-      height: 100px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .inner1 {
-      background-color: antiquewhite;
-    }
-
-    .inner2 {
-      background-color: darkcyan;
-    }
-  </style>
+  <link rel="stylesheet" href="./index.css">
 </head>
 
 <body>
@@ -93,6 +58,16 @@
     function clickHandler(e) {
       e.preventDefault()
     }
+
+    setTimeout(() => {
+      let img = new Image(100)
+      img.src = 'https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/759e2aa805c0461b840e0f0f09ed05fa~tplv-k3u1fbpfcp-zoom-1.image?'
+      document.body.appendChild(img)
+
+      const script = document.createElement('script')
+      script.src = 'https://lf3-short.ibytedapm.com/slardar/fe/sdk-web/plugins/common-monitors.1.1.80.js'
+      document.body.appendChild(script)
+    }, 1000)
   </script>
 </body>
 
