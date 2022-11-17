@@ -1,76 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <style>
-      #root {
-        display: inline-block;
-        height: 90px;
-        overflow: scroll;
-        border: 1px solid orange;
-      }
-      .box {
-        display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-        border: 1px solid orange;
-        overflow: scroll;
-      }
-      .box > div {
-        width: 200px;
-        height: 100px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-      .inner1 {
-        background-color: antiquewhite;
-      }
-      .inner2 {
-        background-color: darkcyan;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="root">
-      <div class="box" data-expose="1001_box_show">
-        <div class="inner1" data-click="{ clickId: 1 }">item 1</div>
-        <div
-          class="inner2"
-          data-click="2022"
-          data-expose="2002_inner2_show"
-        >
-          item 2
-        <a
-          href="www.baidu.com"
-          data-click="alink_clicked"
-          onclick="clickHandler(event)"
-          >click me</a
-        >
-      </div>
-    </div>
-    <script type="module">
-      import WebMonitor from '../dist/monitor-sdk.esm.js'
-      
-      new WebMonitor({
-        sendUrl: 'http://127.0.0.1:8080',
-        domMonitor: true
-      }).createDOMMonitor({
-        visibilty: true,
-        root: document.querySelector('#root')
-      })
-      
-      const inner1 = document.getElementsByClassName('inner1')[0]
-      inner1.addEventListener('click', (e) => {
-        e.stopPropagation()
-      })
 
-      function clickHandler(e) {
-        e.preventDefault()
-      }
-    </script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <style>
+    body {
+      height: 100vh;
+    }
+
+    #root, #app {
+      display: inline-block;
+      height: 90px;
+      overflow: scroll;
+      border: 1px solid orange;
+    }
+
+    .box {
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
+      border: 1px solid orange;
+      overflow: scroll;
+    }
+
+    .box>div {
+      width: 200px;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .inner1 {
+      background-color: antiquewhite;
+    }
+
+    .inner2 {
+      background-color: darkcyan;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root">
+    <div class="box" data-expose="1001_box_show">
+      <div class="inner1" data-click="{ clicked: inner1 }">inner1</div>
+      <div class="inner2" data-click="2022" data-expose="2002_inner2_show">
+        inner2
+      </div>
+      <a href="www.baidu.com" data-click="alink_clicked" onclick="clickHandler(event)">click me</a>
+    </div>
+  </div>
+  <div id="app">
+    <div class="box" data-expose="1001_box_show">
+      <div class="inner1" data-click="{ clicked: inner1 }">inner1</div>
+      <div class="inner2" data-click="2022" data-expose="2002_inner2_show">
+        inner2
+      </div>
+      <a href="www.baidu.com" data-click="alink_clicked" onclick="clickHandler(event)">click me</a>
+    </div>
+  </div>
+
+  <script type="module">
+    import WebMonitor from '../dist/monitor-sdk.esm.js'
+
+    new WebMonitor({
+      sendUrl: 'http://127.0.0.1:8080',
+      domMonitor: true,
+      jsError: true
+    }).createDOMMonitor({
+      visibilty: true,
+      root: document.querySelector('#root')
+    }).createDOMMonitor({
+      visibilty: true,
+      root: document.querySelector('#app')
+    })
+
+    setTimeout(() => {
+      Promise.reject('reject error')
+      const str = ''
+      str.splice(0, 0, 2)
+    }, 100)
+  </script>
+  <script>
+    const inner1 = document.getElementsByClassName('inner1')[0]
+    inner1.addEventListener('click', (e) => {
+      e.stopPropagation()
+    })
+
+    function clickHandler(e) {
+      e.preventDefault()
+    }
+  </script>
+</body>
+
 </html>

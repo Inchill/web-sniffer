@@ -4,7 +4,8 @@
  */
 interface Config {
     sendUrl: string;
-    domMonitor?: boolean;
+    domMonitor: boolean;
+    jsError: boolean;
 }
 declare global {
     interface Window {

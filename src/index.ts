@@ -8,11 +8,14 @@ export default class WebMonitor {
     this.config = Object.assign(this.normalizeConfig(), config)
     this.domConfig = this.normalizeDomConfig()
     window.$monitorConfig = this.config
+
+    this.config.jsError && this.createJsErrorMonitor()
   }
 
   private normalizeConfig() {
     return <Config>{
-      domMonitor: false
+      domMonitor: false,
+      jsError: false
     }
   }
 
@@ -32,7 +35,7 @@ export default class WebMonitor {
    * @param value event value
    * @param type blob data type
    */
-  public reportEvent(key: string, value: string | null, type?: string) {
+  public reportEvent(key: string, value: object | string | null, type?: string) {
     const url = this.config.sendUrl
     const data = {
       key,
@@ -53,13 +56,18 @@ export default class WebMonitor {
     this.domConfig = Object.assign(this.domConfig, domConfig)
     this.eventMonitor()
     this.visibilityMonitor()
+    return this
   }
 
   private eventMonitor() {
     if (this.domConfig.event === false) return
 
+    const { root } = this.domConfig
+
+    if (!root) return
+
     this.domConfig.eventListeners.forEach((eventType) => {
-      window.document.body.addEventListener(
+      root.addEventListener(
         eventType,
         (e) => {
           const target = e.target as HTMLElement
@@ -112,5 +120,29 @@ export default class WebMonitor {
         this.traverseNode(node as HTMLElement, observer)
       }
     }
+  }
+
+  private createJsErrorMonitor () {
+    window.addEventListener('error', e => {
+      const {
+        message,
+        type,
+        lineno,
+        colno,
+        error
+      } = e
+      this.reportEvent(type, {
+        message,
+        lineno,
+        colno,
+        stack: error.stack
+      })
+    })
+
+    window.addEventListener('unhandledrejection', e => {
+      this.reportEvent(e.type, {
+        reason: e.reason
+      })
+    })
   }
 }
