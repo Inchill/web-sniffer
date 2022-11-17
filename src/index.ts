@@ -1,5 +1,5 @@
 import { Config, DOMConfig } from './types/index'
-
+import { createJsErrorMonitor } from './js/index'
 export default class WebMonitor {
   public config: Config
   public domConfig: DOMConfig
@@ -9,13 +9,20 @@ export default class WebMonitor {
     this.domConfig = this.normalizeDomConfig()
     window.$monitorConfig = this.config
 
-    this.config.jsError && this.createJsErrorMonitor()
+    const {
+      url,
+      jsError
+    } = this.config
+
+    jsError && createJsErrorMonitor(url)
   }
 
   private normalizeConfig() {
     return <Config>{
       domMonitor: false,
-      jsError: false
+      jsError: true,
+      resource: true,
+      url: ''
     }
   }
 
@@ -27,24 +34,6 @@ export default class WebMonitor {
       event: true,
       eventListeners: ['click']
     }
-  }
-
-  /**
-   * A method to report event.
-   * @param key event key
-   * @param value event value
-   * @param type blob data type
-   */
-  public reportEvent(key: string, value: object | string | null, type?: string) {
-    const url = this.config.sendUrl
-    const data = {
-      key,
-      value
-    }
-    const blobData = new Blob([JSON.stringify(data)], {
-      type: type ? type : 'application/x-www-form-urlencoded'
-    })
-    navigator.sendBeacon(url, blobData)
   }
 
   /**
@@ -72,7 +61,7 @@ export default class WebMonitor {
         (e) => {
           const target = e.target as HTMLElement
           const value = target.getAttribute('data-click')
-          this.reportEvent(eventType, value)
+          // this.reportEvent(eventType, value)
         },
         {
           capture: true
@@ -92,7 +81,7 @@ export default class WebMonitor {
           if (!target.hasAttribute('data-expose')) return
 
           if (intersectionRatio >= threshold) {
-            this.reportEvent('expose', target.getAttribute('data-expose'))
+            // this.reportEvent('expose', target.getAttribute('data-expose'))
           }
         })
       },
@@ -120,29 +109,5 @@ export default class WebMonitor {
         this.traverseNode(node as HTMLElement, observer)
       }
     }
-  }
-
-  private createJsErrorMonitor () {
-    window.addEventListener('error', e => {
-      const {
-        message,
-        type,
-        lineno,
-        colno,
-        error
-      } = e
-      this.reportEvent(type, {
-        message,
-        lineno,
-        colno,
-        stack: error.stack
-      })
-    })
-
-    window.addEventListener('unhandledrejection', e => {
-      this.reportEvent(e.type, {
-        reason: e.reason
-      })
-    })
   }
 }

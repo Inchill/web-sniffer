@@ -1,12 +1,40 @@
+function o(o, t, e, i) {
+    const n = {
+        key: t,
+        value: e
+    }, r = new Blob([ JSON.stringify(n) ], {
+        type: i || "application/x-www-form-urlencoded"
+    });
+    navigator.sendBeacon(o, r);
+}
+
 class t {
     constructor(t) {
         this.config = Object.assign(this.normalizeConfig(), t), this.domConfig = this.normalizeDomConfig(), 
-        window.$monitorConfig = this.config, this.config.jsError && this.createJsErrorMonitor();
+        window.$monitorConfig = this.config;
+        const {url: e, jsError: i} = this.config;
+        i && function(t) {
+            window.addEventListener("error", (e => {
+                const {message: i, type: n, lineno: r, colno: s, error: a} = e;
+                o(t, n, {
+                    message: i,
+                    lineno: r,
+                    colno: s,
+                    stack: a.stack
+                });
+            })), window.addEventListener("unhandledrejection", (e => {
+                o(t, e.type, {
+                    reason: e.reason
+                });
+            }));
+        }(e);
     }
     normalizeConfig() {
         return {
             domMonitor: !1,
-            jsError: !1
+            jsError: !0,
+            resource: !0,
+            url: ""
         };
     }
     normalizeDomConfig() {
@@ -18,18 +46,9 @@ class t {
             eventListeners: [ "click" ]
         };
     }
-    reportEvent(t, e, o) {
-        const i = this.config.sendUrl, r = {
-            key: t,
-            value: e
-        }, n = new Blob([ JSON.stringify(r) ], {
-            type: o || "application/x-www-form-urlencoded"
-        });
-        navigator.sendBeacon(i, n);
-    }
-    createDOMMonitor(t) {
+    createDOMMonitor(o) {
         if (!1 !== this.config.domMonitor) {
-            return this.domConfig = Object.assign(this.domConfig, t), this.eventMonitor(), this.visibilityMonitor(), 
+            return this.domConfig = Object.assign(this.domConfig, o), this.eventMonitor(), this.visibilityMonitor(), 
             this;
         }
     }
@@ -37,49 +56,33 @@ class t {
         if (!1 === this.domConfig.event) {
             return;
         }
-        const {root: t} = this.domConfig;
-        t && this.domConfig.eventListeners.forEach((e => {
-            t.addEventListener(e, (t => {
-                const o = t.target.getAttribute("data-click");
-                this.reportEvent(e, o);
+        const {root: o} = this.domConfig;
+        o && this.domConfig.eventListeners.forEach((t => {
+            o.addEventListener(t, (o => {
+                o.target.getAttribute("data-click");
             }), {
                 capture: !0
             });
         }));
     }
     visibilityMonitor() {
-        const {root: t, threshold: e} = this.domConfig, o = new IntersectionObserver((t => {
-            t.forEach((t => {
-                const {intersectionRatio: o, target: i} = t;
-                i.hasAttribute("data-expose") && o >= e && this.reportEvent("expose", i.getAttribute("data-expose"));
+        const {root: o, threshold: t} = this.domConfig, e = new IntersectionObserver((o => {
+            o.forEach((o => {
+                const {intersectionRatio: t, target: e} = o;
+                e.hasAttribute("data-expose");
             }));
         }), {
-            root: t,
-            threshold: e
+            root: o,
+            threshold: t
         });
-        this.traverseNode(t, o);
+        this.traverseNode(o, e);
     }
-    traverseNode(t, e) {
-        if (t) {
-            for (const o of t.children) {
-                o.hasAttribute("data-expose") && e.observe(o), o.children.length && this.traverseNode(o, e);
+    traverseNode(o, t) {
+        if (o) {
+            for (const e of o.children) {
+                e.hasAttribute("data-expose") && t.observe(e), e.children.length && this.traverseNode(e, t);
             }
         }
-    }
-    createJsErrorMonitor() {
-        window.addEventListener("error", (t => {
-            const {message: e, type: o, lineno: i, colno: r, error: n} = t;
-            this.reportEvent(o, {
-                message: e,
-                lineno: i,
-                colno: r,
-                stack: n.stack
-            });
-        })), window.addEventListener("unhandledrejection", (t => {
-            this.reportEvent(t.type, {
-                reason: t.reason
-            });
-        }));
     }
 }
 

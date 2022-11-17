@@ -53,12 +53,8 @@ export default [
     },
     plugins: [
       nodeResolve(),
-      terser({
-        format: {
-          beautify: true,
-          braces: true
-        }
-      }),
+      typescript(),
+      terser(),
       babel({
         exclude: /node_modules/,
         extensions: ['.js', '.ts'],

@@ -3,9 +3,10 @@
  * @domMonitor monitor dom visibility and events
  */
 interface Config {
-    sendUrl: string;
+    url: string;
     domMonitor: boolean;
     jsError: boolean;
+    resource: boolean;
 }
 declare global {
     interface Window {

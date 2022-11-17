@@ -3,9 +3,10 @@
  * @domMonitor monitor dom visibility and events
  */
 export interface Config {
-  sendUrl: string
+  url: string
   domMonitor: boolean,
-  jsError: boolean
+  jsError: boolean,
+  resource: boolean
 }
 
 declare global {
