@@ -4,7 +4,6 @@
  */
 export interface Config {
   url: string
-  domMonitor: boolean,
   jsError: boolean,
   resource: boolean
 }
