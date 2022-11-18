@@ -67,9 +67,9 @@
     });
   }
 
-  function _createForOfIteratorHelper$1(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray$1(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-  function _unsupportedIterableToArray$1(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$1(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$1(o, minLen); }
-  function _arrayLikeToArray$1(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+  function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+  function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+  function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
   var DomMonitor = /*#__PURE__*/function () {
     function DomMonitor(url, domConfig) {
       _classCallCheck(this, DomMonitor);
@@ -133,7 +133,7 @@
       key: "traverseNode",
       value: function traverseNode(root, observer) {
         if (!root) return;
-        var _iterator = _createForOfIteratorHelper$1(root.children),
+        var _iterator = _createForOfIteratorHelper(root.children),
           _step;
         try {
           for (_iterator.s(); !(_step = _iterator.n()).done;) {
@@ -155,47 +155,69 @@
     return DomMonitor;
   }();
 
-  function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-  function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-  function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-  function createResourceMonitor() {
+  var loadedResources = [];
+  var reportUrl = '';
+  function createResourceMonitor(url) {
+    reportUrl = url;
+    listenOnResourceLoadFailed();
     if (window.performance) {
-      performanceWatch();
+      resourcePerfWatch();
     } else {
       listenOnload();
     }
   }
-  function performanceWatch() {
+  function resourcePerfWatch() {
+    var entries = performance.getEntriesByType('resource');
+    // filter sendBeacon requests because it's used to post data only so we could ignore.
+    loadedResources = entries.filter(function (entry) {
+      return entry.initiatorType !== 'beacon';
+    });
+    loadedResources.forEach(function (entry) {
+      console.log('first resource loads entry', entry);
+    });
+    // clear resource information on page first load 
+    performance.clearResourceTimings();
+    // monitor subsequent resource loading information
+    // this API cannot distinguish the status is success or not when resource is loaded, 
+    // thus we've to manually filter the failed loadings by listening error.
     var perfObserver = new PerformanceObserver(function (list) {
-      // console.log(111, list.getEntries())
+      var _list = list.getEntries();
+      loadedResources = _list.filter(function (entry) {
+        return entry.initiatorType !== 'beacon';
+      });
+      loadedResources.forEach(function (entry) {
+        console.table(entry);
+      });
     });
     perfObserver.observe({
       entryTypes: ['resource']
     });
-    var entries = performance.getEntriesByType('resource');
-    // filter sendBeacon requests
-    entries = entries.filter(function (entry) {
-      return entry.initiatorType !== 'beacon';
-    });
-    var _iterator = _createForOfIteratorHelper(entries),
-      _step;
-    try {
-      for (_iterator.s(); !(_step = _iterator.n()).done;) {
-        var entry = _step.value;
-        console.log('entry', entry);
-      }
-    } catch (err) {
-      _iterator.e(err);
-    } finally {
-      _iterator.f();
-    }
-    performance.clearResourceTimings();
-    setTimeout(performanceWatch, 2000);
   }
   function listenOnload() {
-    window.onload = function (e) {
+    window.addEventListener('load', function (e) {
       console.log(e);
-    };
+    });
+  }
+  function listenOnResourceLoadFailed() {
+    window.addEventListener('error', function (e) {
+      // filter js error
+      var target = e.target;
+      var isElementTarget = target instanceof HTMLScriptElement || target instanceof HTMLLinkElement || target instanceof HTMLImageElement;
+      if (!isElementTarget) return false;
+      console.log('error', e);
+      var url = target.src || target.src || target.href;
+      loadedResources.forEach(function (resource) {
+        if (resource.name === url) {
+          reportEvent(reportUrl, e.type, {
+            target: resource.initiatorType,
+            url: url
+          });
+        }
+      });
+      loadedResources = [];
+    }, {
+      capture: true
+    });
   }
 
   var WebMonitor = /*#__PURE__*/function () {
@@ -208,7 +230,7 @@
         jsError = _this$config.jsError,
         resource = _this$config.resource;
       jsError && createJsErrorMonitor(url);
-      resource && createResourceMonitor();
+      resource && createResourceMonitor(url);
     }
     _createClass(WebMonitor, [{
       key: "normalizeConfig",

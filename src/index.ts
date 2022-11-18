@@ -16,7 +16,7 @@ export default class WebMonitor {
     } = this.config
 
     jsError && createJsErrorMonitor(url)
-    resource && createResourceMonitor()
+    resource && createResourceMonitor(url)
   }
 
   private normalizeConfig() {
