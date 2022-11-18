@@ -1,6 +1,6 @@
-# monitor-sdk
+# web-monitor
 
-A web monitor jssdk. It has below functionalities:
+A web monitor tool. It has below functionalities:
 
 - **DOM Monitor**: Monitor DOM events and visibility.
 - **JavaScript errors Monitor**: Monitor javascript runtime errors including sync and async code.
@@ -12,5 +12,7 @@ A web monitor jssdk. It has below functionalities:
 - **Custom behaviour Monitor**: Provide custom methods to monitor specific behaviour like PV, UV etc.
 
 ## Install
+
+## API
 
 ## Usage
