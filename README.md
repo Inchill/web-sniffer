@@ -1,6 +1,6 @@
 # web-monitor
 
-A web monitor tool. It has below functionalities:
+A web monitor tool can report data automatically to db before you've provided API url. It has below functionalities:
 
 - **DOM Monitor**: Monitor DOM events and visibility.
 - **JavaScript errors Monitor**: Monitor javascript runtime errors including sync and async code.
@@ -14,6 +14,35 @@ A web monitor tool. It has below functionalities:
 ## Install
 
 ## API
+
+### createDOMMonitor
+
+How to use?
+
+```js
+let wm = new WebMonitor({
+  url: '' // An address to report data
+})
+
+const config = {
+  root: document.documentElement
+}
+
+wm.createDOMMonitor(config)
+```
+
+| name | type | description |
+| ---- | ----- | ------ |
+| visibility | boolean | Dom visibility detection |
+| root | HTMLElement | null | Ehe Element or Document whose bounds are used as the bounding box when testing for intersection.  |
+| threshold | number | A list of thresholds, sorted in increasing numeric order, where each threshold is a ratio of intersection area to bounding box area of an observed target. Notifications for a target are generated when any of the thresholds are crossed for that target. If no value was passed to the constructor, 0 is used. |
+| event | boolean | Dom event detection |
+|  eventListeners | array | Dom events like click, dbclick, mouseenter etc. |
+
+
+### JsError
+
+
 
 ### Resource
 
