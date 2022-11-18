@@ -1,7 +1,7 @@
 {
-  "name": "monitor-sdk",
+  "name": "web-monitor",
   "version": "1.0.0",
-  "description": "A web monitor jssdk.",
+  "description": "A web monitor tool.",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Inchill/monitor-sdk.git"
+    "url": "git+https://github.com/Inchill/web-monitor.git"
   },
   "keywords": [
     "web",
@@ -21,9 +21,9 @@
   "author": "chuckliu",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Inchill/monitor-sdk/issues"
+    "url": "https://github.com/Inchill/web-monitor/issues"
   },
-  "homepage": "https://github.com/Inchill/monitor-sdk#readme",
+  "homepage": "https://github.com/Inchill/web-monitor#readme",
   "devDependencies": {
     "@babel/core": "^7.20.2",
     "@babel/plugin-transform-runtime": "^7.19.6",
