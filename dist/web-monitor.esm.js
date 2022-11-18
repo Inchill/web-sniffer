@@ -1,9 +1,9 @@
-function e(e, t, o, n) {
+function e(e, t, n, o) {
     const r = {
         key: t,
-        value: o
+        value: n
     }, i = new Blob([ JSON.stringify(r) ], {
-        type: n || "application/x-www-form-urlencoded"
+        type: o || "application/x-www-form-urlencoded"
     });
     navigator.sendBeacon(e, i);
 }
@@ -27,62 +27,66 @@ class t {
             return;
         }
         const {root: t} = this.domConfig;
-        t && this.domConfig.eventListeners.forEach((o => {
-            t.addEventListener(o, (t => {
-                const n = t.target.getAttribute("data-click") || "";
-                e(this.url, o, n);
+        t && this.domConfig.eventListeners.forEach((n => {
+            t.addEventListener(n, (t => {
+                const o = t.target;
+                if (!o.hasAttribute(`data-event-${n}`)) {
+                    return;
+                }
+                const r = o.getAttribute(`data-event-${n}`) || "";
+                e(this.url, n, r);
             }), {
                 capture: !0
             });
         }));
     }
     visibilityMonitor() {
-        const {root: t, threshold: o} = this.domConfig, n = new IntersectionObserver((t => {
+        const {root: t, threshold: n} = this.domConfig, o = new IntersectionObserver((t => {
             t.forEach((t => {
-                const {intersectionRatio: n, target: r} = t;
-                if (r.hasAttribute("data-expose") && n >= o) {
+                const {intersectionRatio: o, target: r} = t;
+                if (r.hasAttribute("data-expose") && o >= n) {
                     const t = r.getAttribute("data-expose") || "";
                     e(this.url, "expose", t);
                 }
             }));
         }), {
             root: t,
-            threshold: o
+            threshold: n
         });
-        this.traverseNode(t, n);
+        this.traverseNode(t, o);
     }
     traverseNode(e, t) {
         if (e) {
-            for (const o of e.children) {
-                o.hasAttribute("data-expose") && t.observe(o), o.children.length && this.traverseNode(o, t);
+            for (const n of e.children) {
+                n.hasAttribute("data-expose") && t.observe(n), n.children.length && this.traverseNode(n, t);
             }
         }
     }
 }
 
-let o = [], n = "";
+let n = [], o = "";
 
 function r(t) {
-    n = t, window.addEventListener("error", (t => {
+    o = t, window.addEventListener("error", (t => {
         let r = t.target;
         if (!(r instanceof HTMLScriptElement || r instanceof HTMLLinkElement || r instanceof HTMLImageElement)) {
             return !1;
         }
         const i = (r || HTMLImageElement).src || r.href;
-        o.forEach((o => {
-            o.name === i && e(n, t.type, {
-                target: o.initiatorType,
+        n.forEach((n => {
+            n.name === i && e(o, t.type, {
+                target: n.initiatorType,
                 url: i
             });
-        })), o = [];
+        })), n = [];
     }), {
         capture: !0
     }), window.performance ? function() {
         let e = performance.getEntriesByType("resource");
-        o = e.filter((e => "beacon" !== e.initiatorType)), performance.clearResourceTimings();
+        n = e.filter((e => "beacon" !== e.initiatorType)), performance.clearResourceTimings();
         new PerformanceObserver((e => {
             let t = e.getEntries();
-            o = t.filter((e => "beacon" !== e.initiatorType));
+            n = t.filter((e => "beacon" !== e.initiatorType));
         })).observe({
             entryTypes: [ "resource" ]
         });
@@ -94,22 +98,22 @@ function r(t) {
 class i {
     constructor(t) {
         this.config = Object.assign(this.normalizeConfig(), t), window.$monitorConfig = this.config;
-        const {url: o, jsError: n, resource: i} = this.config;
-        n && function(t) {
-            window.addEventListener("error", (o => {
-                const {message: n, type: r, lineno: i, colno: s, error: a} = o;
+        const {url: n, jsError: o, resource: i} = this.config;
+        o && function(t) {
+            window.addEventListener("error", (n => {
+                const {message: o, type: r, lineno: i, colno: s, error: a} = n;
                 e(t, r, {
-                    message: n,
+                    message: o,
                     lineno: i,
                     colno: s,
                     stack: a.stack
                 });
-            })), window.addEventListener("unhandledrejection", (o => {
-                e(t, o.type, {
-                    reason: o.reason
+            })), window.addEventListener("unhandledrejection", (n => {
+                e(t, n.type, {
+                    reason: n.reason
                 });
             }));
-        }(o), i && r(o);
+        }(n), i && r(n);
     }
     normalizeConfig() {
         return {

@@ -31,8 +31,12 @@ class t {
         const {root: t} = this.domConfig;
         t && this.domConfig.eventListeners.forEach((o => {
             t.addEventListener(o, (t => {
-                const n = t.target.getAttribute("data-click") || "";
-                e(this.url, o, n);
+                const n = t.target;
+                if (!n.hasAttribute(`data-event-${o}`)) {
+                    return;
+                }
+                const r = n.getAttribute(`data-event-${o}`) || "";
+                e(this.url, o, r);
             }), {
                 capture: !0
             });

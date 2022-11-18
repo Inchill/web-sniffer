@@ -13,20 +13,20 @@
 <body>
   <div id="root">
     <div class="box" data-expose="1001_box_show">
-      <div class="inner1" data-click="{ clicked: inner1 }">inner1</div>
-      <div class="inner2" data-click="2022" data-expose="2002_inner2_show">
+      <div class="inner1" data-event="{ clicked: inner1 }">inner1</div>
+      <div class="inner2" data-event="2022" data-expose="2002_inner2_show">
         inner2
       </div>
-      <a href="www.baidu.com" data-click="alink_clicked" onclick="clickHandler(event)">click me</a>
+      <a href="www.baidu.com" data-event="alink_clicked" onclick="clickHandler(event)">click me</a>
     </div>
   </div>
   <div id="app">
     <div class="box" data-expose="1001_box_show">
-      <div class="inner1" data-click="{ clicked: inner1 }">inner1</div>
-      <div class="inner2" data-click="2022" data-expose="2002_inner2_show">
+      <div class="inner1" data-event="{ clicked: inner1 }">inner1</div>
+      <div class="inner2" data-event="2022" data-expose="2002_inner2_show">
         inner2
       </div>
-      <a href="www.baidu.com" data-click="alink_clicked" onclick="clickHandler(event)">click me</a>
+      <a href="www.baidu.com" data-event="alink_clicked" onclick="clickHandler(event)">click me</a>
     </div>
   </div>
 

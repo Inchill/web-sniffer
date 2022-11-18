@@ -12,16 +12,16 @@
   <body>
     <div id="root">
       <div class="box" data-expose="1001_box_show">
-        <div class="inner1" data-click="{ clickId: 1 }">inner1</div>
+        <div class="inner1" data-event-click="{ clickId: 1 }" data-event-mouseenter="mouseenter">inner1</div>
         <div
           class="inner2"
-          data-click="2022"
+          data-event="2022"
           data-expose="2002_inner2_show"
         >
           inner2
         <a
           href="www.baidu.com"
-          data-click="alink_clicked"
+          data-event="alink_clicked"
           onclick="clickHandler(event)"
           >click me</a
         >
@@ -32,7 +32,8 @@
         url: 'http://127.0.0.1:8080'
       }).createDOMMonitor({
         visibilty: true,
-        root: document.querySelector('#root')
+        root: document.querySelector('#root'),
+        eventListeners: ['click', 'mouseenter']
       })
       
       const inner1 = document.getElementsByClassName('inner1')[0]
