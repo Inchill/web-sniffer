@@ -15,4 +15,12 @@ A web monitor tool. It has below functionalities:
 
 ## API
 
+### Resource
+
+In the Config the `resource` is set to true by default, and the web monitor will track the img, script and link resources
+loading, if loaded failed it will report the info which has target tag name and url.
+
+> **Tip**: When the page is first to load resources, the web monitor maybe loaded behind the link css stylesheets, in such case
+the web monitor could not track the failed loadings.
+
 ## Usage

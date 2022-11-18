@@ -1,11 +1,11 @@
 "use strict";
 
-function e(e, t, o, r) {
-    const n = {
+function e(e, t, o, n) {
+    const r = {
         key: t,
         value: o
-    }, i = new Blob([ JSON.stringify(n) ], {
-        type: r || "application/x-www-form-urlencoded"
+    }, i = new Blob([ JSON.stringify(r) ], {
+        type: n || "application/x-www-form-urlencoded"
     });
     navigator.sendBeacon(e, i);
 }
@@ -31,19 +31,19 @@ class t {
         const {root: t} = this.domConfig;
         t && this.domConfig.eventListeners.forEach((o => {
             t.addEventListener(o, (t => {
-                const r = t.target.getAttribute("data-click") || "";
-                e(this.url, o, r);
+                const n = t.target.getAttribute("data-click") || "";
+                e(this.url, o, n);
             }), {
                 capture: !0
             });
         }));
     }
     visibilityMonitor() {
-        const {root: t, threshold: o} = this.domConfig, r = new IntersectionObserver((t => {
+        const {root: t, threshold: o} = this.domConfig, n = new IntersectionObserver((t => {
             t.forEach((t => {
-                const {intersectionRatio: r, target: n} = t;
-                if (n.hasAttribute("data-expose") && r >= o) {
-                    const t = n.getAttribute("data-expose") || "";
+                const {intersectionRatio: n, target: r} = t;
+                if (r.hasAttribute("data-expose") && n >= o) {
+                    const t = r.getAttribute("data-expose") || "";
                     e(this.url, "expose", t);
                 }
             }));
@@ -51,7 +51,7 @@ class t {
             root: t,
             threshold: o
         });
-        this.traverseNode(t, r);
+        this.traverseNode(t, n);
     }
     traverseNode(e, t) {
         if (e) {
@@ -62,18 +62,17 @@ class t {
     }
 }
 
-let o = [], r = "";
+let o = [], n = "";
 
-function n(t) {
-    r = t, window.addEventListener("error", (t => {
-        let n = t.target;
-        if (!(n instanceof HTMLScriptElement || n instanceof HTMLLinkElement || n instanceof HTMLImageElement)) {
+function r(t) {
+    n = t, window.addEventListener("error", (t => {
+        let r = t.target;
+        if (!(r instanceof HTMLScriptElement || r instanceof HTMLLinkElement || r instanceof HTMLImageElement)) {
             return !1;
         }
-        console.log("error", t);
-        const i = n.src || n.src || n.href;
+        const i = (r || HTMLImageElement).src || r.href;
         o.forEach((o => {
-            o.name === i && e(r, t.type, {
+            o.name === i && e(n, t.type, {
                 target: o.initiatorType,
                 url: i
             });
@@ -82,14 +81,10 @@ function n(t) {
         capture: !0
     }), window.performance ? function() {
         let e = performance.getEntriesByType("resource");
-        o = e.filter((e => "beacon" !== e.initiatorType)), o.forEach((e => {
-            console.log("first resource loads entry", e);
-        })), performance.clearResourceTimings();
+        o = e.filter((e => "beacon" !== e.initiatorType)), performance.clearResourceTimings();
         new PerformanceObserver((e => {
             let t = e.getEntries();
-            o = t.filter((e => "beacon" !== e.initiatorType)), o.forEach((e => {
-                console.table(e);
-            }));
+            o = t.filter((e => "beacon" !== e.initiatorType));
         })).observe({
             entryTypes: [ "resource" ]
         });
@@ -101,22 +96,22 @@ function n(t) {
 module.exports = class {
     constructor(t) {
         this.config = Object.assign(this.normalizeConfig(), t), window.$monitorConfig = this.config;
-        const {url: o, jsError: r, resource: i} = this.config;
-        r && function(t) {
+        const {url: o, jsError: n, resource: i} = this.config;
+        n && function(t) {
             window.addEventListener("error", (o => {
-                const {message: r, type: n, lineno: i, colno: s, error: c} = o;
-                e(t, n, {
-                    message: r,
+                const {message: n, type: r, lineno: i, colno: s, error: a} = o;
+                e(t, r, {
+                    message: n,
                     lineno: i,
                     colno: s,
-                    stack: c.stack
+                    stack: a.stack
                 });
             })), window.addEventListener("unhandledrejection", (o => {
                 e(t, o.type, {
                     reason: o.reason
                 });
             }));
-        }(o), i && n(o);
+        }(o), i && r(o);
     }
     normalizeConfig() {
         return {

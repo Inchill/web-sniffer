@@ -30,13 +30,12 @@
     </div>
   </div>
 
+
   <script type="module">
     import WebMonitor from '../dist/web-monitor.esm.js'
 
-    new WebMonitor({
-      url: 'http://127.0.0.1:8080',
-      jsError: true
-    }).createDOMMonitor({
+    new WebMonitor()
+    .createDOMMonitor({
       visibilty: true,
       root: document.querySelector('#root')
     }).createDOMMonitor({
@@ -50,7 +49,8 @@
       str.splice(0, 0, 2)
     }, 100)
   </script>
-  <script>
+
+  <script type="text/javascript">
     const inner1 = document.getElementsByClassName('inner1')[0]
     inner1.addEventListener('click', (e) => {
       e.stopPropagation()
@@ -70,7 +70,8 @@
       document.body.appendChild(script)
 
       const link = document.createElement('link')
-      link.href = 'http://127.0.0.1:8080/404.css'
+      link.rel = 'stylesheet'
+      link.href = '/not-found.css'
       document.head.appendChild(link)
     }, 500)
   </script>

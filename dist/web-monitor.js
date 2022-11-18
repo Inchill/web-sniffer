@@ -172,9 +172,9 @@
     loadedResources = entries.filter(function (entry) {
       return entry.initiatorType !== 'beacon';
     });
-    loadedResources.forEach(function (entry) {
-      console.log('first resource loads entry', entry);
-    });
+    // loadedResources.forEach(entry => {
+    //   console.log('first resource loads entry', entry)
+    // })
     // clear resource information on page first load 
     performance.clearResourceTimings();
     // monitor subsequent resource loading information
@@ -185,10 +185,11 @@
       loadedResources = _list.filter(function (entry) {
         return entry.initiatorType !== 'beacon';
       });
-      loadedResources.forEach(function (entry) {
-        console.table(entry);
-      });
+      // loadedResources.forEach(entry => {
+      //   console.log('daynamic loaded resource', entry)
+      // })
     });
+
     perfObserver.observe({
       entryTypes: ['resource']
     });
@@ -204,8 +205,7 @@
       var target = e.target;
       var isElementTarget = target instanceof HTMLScriptElement || target instanceof HTMLLinkElement || target instanceof HTMLImageElement;
       if (!isElementTarget) return false;
-      console.log('error', e);
-      var url = target.src || target.src || target.href;
+      var url = (target || HTMLImageElement).src || target.href;
       loadedResources.forEach(function (resource) {
         if (resource.name === url) {
           reportEvent(reportUrl, e.type, {

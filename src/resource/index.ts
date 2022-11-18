@@ -19,9 +19,9 @@ function resourcePerfWatch () {
   // filter sendBeacon requests because it's used to post data only so we could ignore.
   loadedResources = entries.filter(entry => entry.initiatorType !== 'beacon')
 
-  loadedResources.forEach(entry => {
-    console.log('first resource loads entry', entry)
-  })
+  // loadedResources.forEach(entry => {
+  //   console.log('first resource loads entry', entry)
+  // })
 
   // clear resource information on page first load 
   performance.clearResourceTimings()
@@ -34,9 +34,9 @@ function resourcePerfWatch () {
     let _list = list.getEntries() as PerformanceResourceTiming[]
     loadedResources = _list.filter(entry => entry.initiatorType !== 'beacon')
 
-    loadedResources.forEach(entry => {
-      console.table(entry)
-    })
+    // loadedResources.forEach(entry => {
+    //   console.log('daynamic loaded resource', entry)
+    // })
   })
 
   perfObserver.observe({
@@ -57,12 +57,10 @@ function listenOnResourceLoadFailed () {
     let isElementTarget = target instanceof HTMLScriptElement
       || target instanceof HTMLLinkElement
       || target instanceof HTMLImageElement
+
     if (!isElementTarget) return false
-  
-    console.log('error', e)
-    const url = (target as HTMLScriptElement).src
-      || (target as HTMLImageElement).src
-      || (target as HTMLLinkElement).href
+
+    const url = (target as HTMLScriptElement || HTMLImageElement).src || (target as HTMLLinkElement).href
 
     loadedResources.forEach(resource => {
       if (resource.name === url) {
