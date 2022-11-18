@@ -1,6 +1,8 @@
 import { DOMConfig } from '../types/index'
 import { reportEvent } from '../utils/index'
 
+const prefix = 'data-event'
+
 export default class DomMonitor {
   private domConfig: DOMConfig
   private url: string
@@ -34,7 +36,8 @@ export default class DomMonitor {
         eventType,
         (e) => {
           const target = e.target as HTMLElement
-          const value = target.getAttribute('data-click') || ''
+          if (!target.hasAttribute(`${prefix}-${eventType}`)) return
+          const value = target.getAttribute(`${prefix}-${eventType}`) || ''
           reportEvent(this.url, eventType, value)
         },
         {
