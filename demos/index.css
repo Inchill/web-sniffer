@@ -10,6 +10,7 @@
   box-sizing: border-box;
   border: 1px solid orange;
   overflow: scroll;
+  background-image: url('./image.png');
 }
 .box > div {
   width: 200px;

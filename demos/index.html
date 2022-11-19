@@ -27,13 +27,14 @@
         >
       </div>
     </div>
+    <img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/759e2aa805c0461b840e0f0f09ed05fa~tplv-k3u1fbpfcp-zoom-1.image?" alt="">
     <script>
       new WebMonitor({
         url: 'http://127.0.0.1:8080'
       }).createDOMMonitor({
         visibilty: true,
         root: document.querySelector('#root'),
-        eventListeners: ['click', 'mouseenter']
+        eventListeners: ['click']
       })
       
       const inner1 = document.getElementsByClassName('inner1')[0]
@@ -44,6 +45,22 @@
       function clickHandler(e) {
         e.preventDefault()
       }
+    </script>
+    <script type="text/javascript">
+      setTimeout(() => {
+        let img = new Image(100)
+        img.src = 'https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/759e2aa805c0461b840e0f0f09ed05fa~tplv-k3u1fbpfcp-zoom-1.image?'
+        document.body.appendChild(img)
+
+        const script = document.createElement('script')
+        script.src = 'https://lf3-short.ibytedapm.com/slardar/fe/sdk-web/plugins/common-monitors.1.1.80.js'
+        document.body.appendChild(script)
+
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = '/not-found.css'
+        document.head.appendChild(link)
+      }, 500)
     </script>
   </body>
 </html>

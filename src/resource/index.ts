@@ -1,6 +1,13 @@
 import { reportEvent } from '../utils/index'
 
 let loadedResources: PerformanceResourceTiming[] = []
+/** When performace API is not supported by browser */
+let isFirstLoad: boolean = true
+let loadedErrors: ErrorEvent[] = []
+let loadedStyleSheets: StyleSheet[]  = []
+let loadedScripts: HTMLScriptElement[] = []
+let loadedImages: HTMLImageElement[] = []
+/** */
 let reportUrl: string = ''
 
 export function createResourceMonitor (url: string) {
@@ -45,8 +52,70 @@ function resourcePerfWatch () {
 }
 
 function listenOnload () {
-  window.addEventListener('load', e => {
-    console.log(e)
+  document.onreadystatechange = (e) => {
+    if (document.readyState === 'complete') {
+      const target = e.target as Document
+      const {
+        styleSheets,
+        scripts,
+        images
+      } = target
+
+      for (const item of styleSheets) {
+        if (item.href) {
+          loadedStyleSheets.push(item)
+        }
+      }
+
+      for (const item of scripts) {
+        if (item.src) {
+          loadedScripts.push(item)
+        }
+      }
+
+      for (const item of images) {
+        if (item.src) {
+          loadedImages.push(item)
+        }
+      }
+
+      // first load
+      loadedErrors.forEach(e => {
+        const target = e.target
+        const url = (target as HTMLScriptElement || HTMLImageElement).src || (target as HTMLLinkElement).href
+        filterFailedResources(e.target, e.type, url)
+      })
+
+      isFirstLoad = false
+    }
+  }
+}
+
+function filterFailedResources (target: EventTarget | null, type: string, url: string) {
+  target instanceof HTMLLinkElement && loadedStyleSheets.forEach(resource => {
+    if (resource.href === url) {
+      reportEvent(reportUrl, type, {
+        target: target.tagName.toLowerCase(),
+        url
+      })
+    }
+  })
+
+  target instanceof HTMLScriptElement && loadedScripts.forEach(resource => {
+    if (resource.src === url) {
+      reportEvent(reportUrl, type, {
+        target: target.tagName.toLowerCase(),
+        url
+      })
+    }
+  })
+  target instanceof HTMLImageElement && loadedImages.forEach(resource => {
+    if (resource.src === url) {
+      reportEvent(reportUrl, type, {
+        target: target.tagName.toLowerCase(),
+        url
+      })
+    }
   })
 }
 
@@ -61,17 +130,28 @@ function listenOnResourceLoadFailed () {
     if (!isElementTarget) return false
 
     const url = (target as HTMLScriptElement || HTMLImageElement).src || (target as HTMLLinkElement).href
+    
+    if (window.performance) {
+      loadedResources.forEach(resource => {
+        if (resource.name === url) {
+          reportEvent(reportUrl, e.type, {
+            target: resource.initiatorType,
+            url
+          })
+        }
+      })
 
-    loadedResources.forEach(resource => {
-      if (resource.name === url) {
+      loadedResources = []
+    } else {
+      if (isFirstLoad) {
+        loadedErrors.push(e)
+      } else {
         reportEvent(reportUrl, e.type, {
-          target: resource.initiatorType,
+          target: (e.target as HTMLElement).tagName.toLowerCase(),
           url
         })
       }
-    })
-
-    loadedResources = []
+    }
   }, {
     capture: true
   })

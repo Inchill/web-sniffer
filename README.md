@@ -54,4 +54,9 @@ loading, if loaded failed it will report the info which has target tag name and 
 
 > **Notice**: When the page is first to load resources, the web monitor maybe loaded behind the link css stylesheets, in such case the web monitor could not track the failed link loadings.
 
+If performance API is not supported in the browser, a work around way is combining onerror and onreadystatechange handlers.
+When the page is first to load, onerror handler may be called before onreadystatechange handler and onreadystatechange handler  works only once, so there is a flag to check if the loading errors are first loading.
+
+> **Notice**: Using background-image in css stylesheets to load will not be detected.
+
 ## Usage
