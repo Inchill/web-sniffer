@@ -31,6 +31,8 @@ const config = {
 wm.createDOMMonitor(config)
 ```
 
+The config has the following configuration items:
+
 | name | type | description |
 | ---- | ----- | ------ |
 | visibility | boolean | Dom visibility detection |
@@ -50,7 +52,7 @@ If you don't want to monitor js errors, just set `jsError` to false in the confi
 In the Config the `resource` is set to true by default, and the web monitor will track the img, script and link resources
 loading, if loaded failed it will report the info which has target tag name and url.
 
-> **Tip**: When the page is first to load resources, the web monitor maybe loaded behind the link css stylesheets, in such case
+> **Notice**: When the page is first to load resources, the web monitor maybe loaded behind the link css stylesheets, in such case
 the web monitor could not track the failed loadings.
 
 ## Usage
