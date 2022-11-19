@@ -42,8 +42,8 @@ wm.createDOMMonitor(config)
 
 ### JsError
 
-The web monitor will default capture the js errors including sync errors and async errors like promise unhandledrejection.
-If you do not wanna monitor js errors, just set the `jsError` as false in the config. 
+By default, the web monitor will catch js errors, including synchronous errors and asynchronous errors such as promise unhandledrejection.
+If you don't want to monitor js errors, just set `jsError` to false in the configuration.
 
 ### Resource
 
