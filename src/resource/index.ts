@@ -26,10 +26,6 @@ function resourcePerfWatch () {
   // filter sendBeacon requests because it's used to post data only so we could ignore.
   loadedResources = entries.filter(entry => entry.initiatorType !== 'beacon')
 
-  // loadedResources.forEach(entry => {
-  //   console.log('first resource loads entry', entry)
-  // })
-
   // clear resource information on page first load 
   performance.clearResourceTimings()
 
@@ -40,10 +36,6 @@ function resourcePerfWatch () {
   const perfObserver = new PerformanceObserver(list => {
     let _list = list.getEntries() as PerformanceResourceTiming[]
     loadedResources = _list.filter(entry => entry.initiatorType !== 'beacon')
-
-    // loadedResources.forEach(entry => {
-    //   console.log('daynamic loaded resource', entry)
-    // })
   })
 
   perfObserver.observe({
