@@ -34,7 +34,7 @@ wm.createDOMMonitor(config)
 | name | type | description |
 | ---- | ----- | ------ |
 | visibility | boolean | Dom visibility detection |
-| root | HTMLElement | null | Ehe Element or Document whose bounds are used as the bounding box when testing for intersection.  |
+| root | HTMLElement | Ehe Element or Document whose bounds are used as the bounding box when testing for intersection. |
 | threshold | number | A list of thresholds, sorted in increasing numeric order, where each threshold is a ratio of intersection area to bounding box area of an observed target. Notifications for a target are generated when any of the thresholds are crossed for that target. If no value was passed to the constructor, 0 is used. |
 | event | boolean | Dom event detection |
 |  eventListeners | array | Dom events like click, dbclick, mouseenter etc. |
@@ -42,7 +42,8 @@ wm.createDOMMonitor(config)
 
 ### JsError
 
-
+The web monitor will default capture the js errors including sync errors and async errors like promise unhandledrejection.
+If you do not wanna monitor js errors, just set the `jsError` as false in the config. 
 
 ### Resource
 
