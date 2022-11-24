@@ -124,7 +124,11 @@ function listenOnResourceLoadFailed () {
 
     if (!isElementTarget) return false
 
-    const url = (target as HTMLScriptElement || HTMLImageElement || HTMLVideoElement || HTMLSourceElement || HTMLAudioElement).src
+    const url = (target as HTMLScriptElement
+      || HTMLImageElement
+      || HTMLVideoElement
+      || HTMLSourceElement
+      || HTMLAudioElement).src
       || (target as HTMLLinkElement).href
     
     if (window.performance) {
