@@ -1,9 +1,9 @@
-function e(e, t, r, o) {
+function e(e, t, o, r) {
     const n = {
         key: t,
-        value: r
+        value: o
     }, i = new Blob([ JSON.stringify(n) ], {
-        type: o || "application/x-www-form-urlencoded"
+        type: r || "application/x-www-form-urlencoded"
     });
     navigator.sendBeacon(e, i);
 }
@@ -27,58 +27,58 @@ class t {
             return;
         }
         const {root: t} = this.domConfig;
-        t && this.domConfig.eventListeners.forEach((r => {
-            t.addEventListener(r, (t => {
-                const o = t.target;
-                if (!o.hasAttribute(`data-event-${r}`)) {
+        t && this.domConfig.eventListeners.forEach((o => {
+            t.addEventListener(o, (t => {
+                const r = t.target;
+                if (!r.hasAttribute(`data-event-${o}`)) {
                     return;
                 }
-                const n = o.getAttribute(`data-event-${r}`) || "";
-                e(this.url, r, n);
+                const n = r.getAttribute(`data-event-${o}`) || "";
+                e(this.url, o, n);
             }), {
                 capture: !0
             });
         }));
     }
     visibilityMonitor() {
-        const {root: t, threshold: r} = this.domConfig, o = new IntersectionObserver((t => {
+        const {root: t, threshold: o} = this.domConfig, r = new IntersectionObserver((t => {
             t.forEach((t => {
-                const {intersectionRatio: o, target: n} = t;
-                if (n.hasAttribute("data-expose") && o >= r) {
+                const {intersectionRatio: r, target: n} = t;
+                if (n.hasAttribute("data-expose") && r >= o) {
                     const t = n.getAttribute("data-expose") || "";
                     e(this.url, "expose", t);
                 }
             }));
         }), {
             root: t,
-            threshold: r
+            threshold: o
         });
-        this.traverseNode(t, o);
+        this.traverseNode(t, r);
     }
     traverseNode(e, t) {
         if (e) {
-            for (const r of e.children) {
-                r.hasAttribute("data-expose") && t.observe(r), r.children.length && this.traverseNode(r, t);
+            for (const o of e.children) {
+                o.hasAttribute("data-expose") && t.observe(o), o.children.length && this.traverseNode(o, t);
             }
         }
     }
 }
 
-let r = [], o = !0, n = [], i = [], s = [], a = [], c = "";
+let o = [], r = !0, n = [], i = [], s = [], a = [], c = "";
 
 function f(t) {
     c = t, window.addEventListener("error", (t => {
         let i = t.target;
-        if (!(i instanceof HTMLScriptElement || i instanceof HTMLLinkElement || i instanceof HTMLImageElement)) {
+        if (!(i instanceof HTMLScriptElement || i instanceof HTMLLinkElement || i instanceof HTMLImageElement || i instanceof HTMLVideoElement || i instanceof HTMLSourceElement || i instanceof HTMLAudioElement)) {
             return !1;
         }
-        const s = (i || HTMLImageElement).src || i.href;
-        window.performance ? (r.forEach((r => {
-            r.name === s && e(c, t.type, {
-                target: r.initiatorType,
+        const s = (i || HTMLImageElement || HTMLVideoElement || HTMLSourceElement || HTMLAudioElement).src || i.href;
+        window.performance ? (o.forEach((o => {
+            o.name === s && e(c, t.type, {
+                target: o.initiatorType,
                 url: s
             });
-        })), r = []) : o ? n.push(t) : e(c, t.type, {
+        })), o = []) : r ? n.push(t) : e(c, t.type, {
             target: t.target.tagName.toLowerCase(),
             url: s
         });
@@ -86,46 +86,46 @@ function f(t) {
         capture: !0
     }), window.performance ? function() {
         let e = performance.getEntriesByType("resource");
-        r = e.filter((e => "beacon" !== e.initiatorType)), performance.clearResourceTimings();
+        o = e.filter((e => "beacon" !== e.initiatorType)), performance.clearResourceTimings();
         new PerformanceObserver((e => {
             let t = e.getEntries();
-            r = t.filter((e => "beacon" !== e.initiatorType));
+            o = t.filter((e => "beacon" !== e.initiatorType));
         })).observe({
             entryTypes: [ "resource" ]
         });
     }() : document.onreadystatechange = t => {
         if ("complete" === document.readyState) {
-            const r = t.target, {styleSheets: f, scripts: l, images: h} = r;
+            const o = t.target, {styleSheets: f, scripts: l, images: u} = o;
             for (const e of f) {
                 e.href && i.push(e);
             }
             for (const e of l) {
                 e.src && s.push(e);
             }
-            for (const e of h) {
+            for (const e of u) {
                 e.src && a.push(e);
             }
             n.forEach((t => {
-                const r = t.target, o = (r || HTMLImageElement).src || r.href;
-                !function(t, r, o) {
+                const o = t.target, r = (o || HTMLImageElement).src || o.href;
+                !function(t, o, r) {
                     t instanceof HTMLLinkElement && i.forEach((n => {
-                        n.href === o && e(c, r, {
+                        n.href === r && e(c, o, {
                             target: t.tagName.toLowerCase(),
-                            url: o
+                            url: r
                         });
                     })), t instanceof HTMLScriptElement && s.forEach((n => {
-                        n.src === o && e(c, r, {
+                        n.src === r && e(c, o, {
                             target: t.tagName.toLowerCase(),
-                            url: o
+                            url: r
                         });
                     })), t instanceof HTMLImageElement && a.forEach((n => {
-                        n.src === o && e(c, r, {
+                        n.src === r && e(c, o, {
                             target: t.tagName.toLowerCase(),
-                            url: o
+                            url: r
                         });
                     }));
-                }(t.target, t.type, o);
-            })), o = !1;
+                }(t.target, t.type, r);
+            })), r = !1;
         }
     };
 }
@@ -133,22 +133,22 @@ function f(t) {
 class l {
     constructor(t) {
         this.config = Object.assign(this.normalizeConfig(), t), window.$monitorConfig = this.config;
-        const {url: r, jsError: o, resource: n} = this.config;
-        o && function(t) {
-            window.addEventListener("error", (r => {
-                const {message: o, type: n, lineno: i, colno: s, error: a} = r;
+        const {url: o, jsError: r, resource: n} = this.config;
+        r && function(t) {
+            window.addEventListener("error", (o => {
+                const {message: r, type: n, lineno: i, colno: s, error: a} = o;
                 e(t, n, {
-                    message: o,
+                    message: r,
                     lineno: i,
                     colno: s,
                     stack: a.stack
                 });
-            })), window.addEventListener("unhandledrejection", (r => {
-                e(t, r.type, {
-                    reason: r.reason
+            })), window.addEventListener("unhandledrejection", (o => {
+                e(t, o.type, {
+                    reason: o.reason
                 });
             }));
-        }(r), n && f(r);
+        }(o), n && f(o);
     }
     normalizeConfig() {
         return {

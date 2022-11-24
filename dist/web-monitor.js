@@ -184,9 +184,6 @@
     loadedResources = entries.filter(function (entry) {
       return entry.initiatorType !== 'beacon';
     });
-    // loadedResources.forEach(entry => {
-    //   console.log('first resource loads entry', entry)
-    // })
     // clear resource information on page first load 
     performance.clearResourceTimings();
     // monitor subsequent resource loading information
@@ -197,11 +194,7 @@
       loadedResources = _list.filter(function (entry) {
         return entry.initiatorType !== 'beacon';
       });
-      // loadedResources.forEach(entry => {
-      //   console.log('daynamic loaded resource', entry)
-      // })
     });
-
     perfObserver.observe({
       entryTypes: ['resource']
     });
@@ -295,9 +288,9 @@
     window.addEventListener('error', function (e) {
       // filter js error
       var target = e.target;
-      var isElementTarget = target instanceof HTMLScriptElement || target instanceof HTMLLinkElement || target instanceof HTMLImageElement;
+      var isElementTarget = target instanceof HTMLScriptElement || target instanceof HTMLLinkElement || target instanceof HTMLImageElement || target instanceof HTMLVideoElement || target instanceof HTMLSourceElement || target instanceof HTMLAudioElement;
       if (!isElementTarget) return false;
-      var url = (target || HTMLImageElement).src || target.href;
+      var url = (target || HTMLImageElement || HTMLVideoElement || HTMLSourceElement || HTMLAudioElement).src || target.href;
       if (window.performance) {
         loadedResources.forEach(function (resource) {
           if (resource.name === url) {

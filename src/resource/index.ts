@@ -118,10 +118,14 @@ function listenOnResourceLoadFailed () {
     let isElementTarget = target instanceof HTMLScriptElement
       || target instanceof HTMLLinkElement
       || target instanceof HTMLImageElement
+      || target instanceof HTMLVideoElement
+      || target instanceof HTMLSourceElement
+      || target instanceof HTMLAudioElement
 
     if (!isElementTarget) return false
 
-    const url = (target as HTMLScriptElement || HTMLImageElement).src || (target as HTMLLinkElement).href
+    const url = (target as HTMLScriptElement || HTMLImageElement || HTMLVideoElement || HTMLSourceElement || HTMLAudioElement).src
+      || (target as HTMLLinkElement).href
     
     if (window.performance) {
       loadedResources.forEach(resource => {
