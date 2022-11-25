@@ -1,9 +1,9 @@
-function e(e, t, o, r) {
-    const n = {
+function e(e, t, n, o) {
+    const r = {
         key: t,
-        value: o
-    }, i = new Blob([ JSON.stringify(n) ], {
-        type: r || "application/x-www-form-urlencoded"
+        value: n
+    }, i = new Blob([ JSON.stringify(r) ], {
+        type: o || "application/x-www-form-urlencoded"
     });
     navigator.sendBeacon(e, i);
 }
@@ -27,135 +27,169 @@ class t {
             return;
         }
         const {root: t} = this.domConfig;
-        t && this.domConfig.eventListeners.forEach((o => {
-            t.addEventListener(o, (t => {
-                const r = t.target;
-                if (!r.hasAttribute(`data-event-${o}`)) {
+        t && this.domConfig.eventListeners.forEach((n => {
+            t.addEventListener(n, (t => {
+                const o = t.target;
+                if (!o.hasAttribute(`data-event-${n}`)) {
                     return;
                 }
-                const n = r.getAttribute(`data-event-${o}`) || "";
-                e(this.url, o, n);
+                const r = o.getAttribute(`data-event-${n}`) || "";
+                e(this.url, n, r);
             }), {
                 capture: !0
             });
         }));
     }
     visibilityMonitor() {
-        const {root: t, threshold: o} = this.domConfig, r = new IntersectionObserver((t => {
+        const {root: t, threshold: n} = this.domConfig, o = new IntersectionObserver((t => {
             t.forEach((t => {
-                const {intersectionRatio: r, target: n} = t;
-                if (n.hasAttribute("data-expose") && r >= o) {
-                    const t = n.getAttribute("data-expose") || "";
+                const {intersectionRatio: o, target: r} = t;
+                if (r.hasAttribute("data-expose") && o >= n) {
+                    const t = r.getAttribute("data-expose") || "";
                     e(this.url, "expose", t);
                 }
             }));
         }), {
             root: t,
-            threshold: o
+            threshold: n
         });
-        this.traverseNode(t, r);
+        this.traverseNode(t, o);
     }
     traverseNode(e, t) {
         if (e) {
-            for (const o of e.children) {
-                o.hasAttribute("data-expose") && t.observe(o), o.children.length && this.traverseNode(o, t);
+            for (const n of e.children) {
+                n.hasAttribute("data-expose") && t.observe(n), n.children.length && this.traverseNode(n, t);
             }
         }
     }
 }
 
-let o = [], r = !0, n = [], i = [], s = [], a = [], c = "";
+let n = [], o = !0;
+
+const r = [], i = [], s = [], a = [];
+
+let c = "";
 
 function f(t) {
     c = t, window.addEventListener("error", (t => {
-        let i = t.target;
+        const i = t.target;
         if (!(i instanceof HTMLScriptElement || i instanceof HTMLLinkElement || i instanceof HTMLImageElement || i instanceof HTMLVideoElement || i instanceof HTMLSourceElement || i instanceof HTMLAudioElement)) {
             return !1;
         }
         const s = (i || HTMLImageElement || HTMLVideoElement || HTMLSourceElement || HTMLAudioElement).src || i.href;
-        window.performance ? (o.forEach((o => {
-            o.name === s && e(c, t.type, {
-                target: o.initiatorType,
+        window.performance ? (n.forEach((n => {
+            n.name === s && e(c, t.type, {
+                target: n.initiatorType,
                 url: s
             });
-        })), o = []) : r ? n.push(t) : e(c, t.type, {
+        })), n = []) : o ? r.push(t) : e(c, t.type, {
             target: t.target.tagName.toLowerCase(),
             url: s
         });
     }), {
         capture: !0
     }), window.performance ? function() {
-        let e = performance.getEntriesByType("resource");
-        o = e.filter((e => "beacon" !== e.initiatorType)), performance.clearResourceTimings();
+        const e = performance.getEntriesByType("resource");
+        n = e.filter((e => "beacon" !== e.initiatorType)), performance.clearResourceTimings();
         new PerformanceObserver((e => {
-            let t = e.getEntries();
-            o = t.filter((e => "beacon" !== e.initiatorType));
+            const t = e.getEntries();
+            n = t.filter((e => "beacon" !== e.initiatorType));
         })).observe({
             entryTypes: [ "resource" ]
         });
     }() : document.onreadystatechange = t => {
         if ("complete" === document.readyState) {
-            const o = t.target, {styleSheets: f, scripts: l, images: u} = o;
+            const n = t.target, {styleSheets: f, scripts: l, images: h} = n;
             for (const e of f) {
                 e.href && i.push(e);
             }
             for (const e of l) {
                 e.src && s.push(e);
             }
-            for (const e of u) {
+            for (const e of h) {
                 e.src && a.push(e);
             }
-            n.forEach((t => {
-                const o = t.target, r = (o || HTMLImageElement).src || o.href;
-                !function(t, o, r) {
-                    t instanceof HTMLLinkElement && i.forEach((n => {
-                        n.href === r && e(c, o, {
+            r.forEach((t => {
+                const n = t.target, o = (n || HTMLImageElement).src || n.href;
+                !function(t, n, o) {
+                    t instanceof HTMLLinkElement && i.forEach((r => {
+                        r.href === o && e(c, n, {
                             target: t.tagName.toLowerCase(),
-                            url: r
+                            url: o
                         });
-                    })), t instanceof HTMLScriptElement && s.forEach((n => {
-                        n.src === r && e(c, o, {
+                    })), t instanceof HTMLScriptElement && s.forEach((r => {
+                        r.src === o && e(c, n, {
                             target: t.tagName.toLowerCase(),
-                            url: r
+                            url: o
                         });
-                    })), t instanceof HTMLImageElement && a.forEach((n => {
-                        n.src === r && e(c, o, {
+                    })), t instanceof HTMLImageElement && a.forEach((r => {
+                        r.src === o && e(c, n, {
                             target: t.tagName.toLowerCase(),
-                            url: r
+                            url: o
                         });
                     }));
-                }(t.target, t.type, r);
-            })), r = !1;
+                }(t.target, t.type, o);
+            })), o = !1;
         }
     };
 }
 
-class l {
+function l(t) {
+    window.onhashchange = function(n) {
+        const {type: o, oldURL: r, newURL: i} = n;
+        e(t, o, {
+            oldURL: r,
+            newURL: i
+        });
+    }, function(t, n) {
+        t.forEach((t => {
+            window.addEventListener(t, (t => {
+                const o = t.target, {href: r, origin: i} = o.location;
+                e(n, t.type, {
+                    href: r,
+                    origin: i
+                });
+            }));
+        }));
+    }([ "pushState", "replaceState" ], t), window.history.pushState = h("pushState"), 
+    window.history.replaceState = h("replaceState");
+}
+
+function h(e) {
+    const t = history[e];
+    return function() {
+        const n = t.apply(this, arguments), o = new Event(e);
+        return window.dispatchEvent(o), n;
+    };
+}
+
+class u {
     constructor(t) {
         this.config = Object.assign(this.normalizeConfig(), t), window.$monitorConfig = this.config;
-        const {url: o, jsError: r, resource: n} = this.config;
-        r && function(t) {
-            window.addEventListener("error", (o => {
-                const {message: r, type: n, lineno: i, colno: s, error: a} = o;
-                e(t, n, {
-                    message: r,
+        const {url: n, jsError: o, resource: r, route: i} = this.config;
+        o && function(t) {
+            window.addEventListener("error", (n => {
+                const {message: o, type: r, lineno: i, colno: s, error: a} = n;
+                e(t, r, {
+                    message: o,
                     lineno: i,
                     colno: s,
                     stack: a.stack
                 });
-            })), window.addEventListener("unhandledrejection", (o => {
-                e(t, o.type, {
-                    reason: o.reason
+            })), window.addEventListener("unhandledrejection", (n => {
+                e(t, n.type, {
+                    reason: n.reason
                 });
             }));
-        }(o), n && f(o);
+        }(n), r && f(n), i && l(n);
     }
     normalizeConfig() {
         return {
             domMonitor: !1,
             jsError: !0,
             resource: !0,
-            url: ""
+            url: "",
+            route: !0
         };
     }
     createDOMMonitor(e) {
@@ -163,4 +197,4 @@ class l {
     }
 }
 
-export { l as default };
+export { u as default };

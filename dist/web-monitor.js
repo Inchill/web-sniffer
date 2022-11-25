@@ -316,6 +316,45 @@
     });
   }
 
+  function createRouteMonitor(url) {
+    window.onhashchange = function (hash) {
+      var type = hash.type,
+        oldURL = hash.oldURL,
+        newURL = hash.newURL;
+      reportEvent(url, type, {
+        oldURL: oldURL,
+        newURL: newURL
+      });
+    };
+    onEvents(['pushState', 'replaceState'], url);
+    window.history.pushState = createHistoryEvent('pushState');
+    window.history.replaceState = createHistoryEvent('replaceState');
+  }
+  function createHistoryEvent(type) {
+    var origin = history[type];
+    return function () {
+      // eslint-disable-next-line prefer-rest-params
+      var res = origin.apply(this, arguments);
+      var event = new Event(type);
+      window.dispatchEvent(event);
+      return res;
+    };
+  }
+  function onEvents(events, url) {
+    events.forEach(function (event) {
+      window.addEventListener(event, function (evt) {
+        var target = evt.target;
+        var _target$location = target.location,
+          href = _target$location.href,
+          origin = _target$location.origin;
+        reportEvent(url, evt.type, {
+          href: href,
+          origin: origin
+        });
+      });
+    });
+  }
+
   var WebMonitor = /*#__PURE__*/function () {
     function WebMonitor(config) {
       _classCallCheck(this, WebMonitor);
@@ -324,9 +363,11 @@
       var _this$config = this.config,
         url = _this$config.url,
         jsError = _this$config.jsError,
-        resource = _this$config.resource;
+        resource = _this$config.resource,
+        route = _this$config.route;
       jsError && createJsErrorMonitor(url);
       resource && createResourceMonitor(url);
+      route && createRouteMonitor(url);
     }
     _createClass(WebMonitor, [{
       key: "normalizeConfig",
@@ -335,7 +376,8 @@
           domMonitor: false,
           jsError: true,
           resource: true,
-          url: ''
+          url: '',
+          route: true
         };
       }
       /**

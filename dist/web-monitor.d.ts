@@ -6,6 +6,7 @@ interface Config {
     url: string;
     jsError: boolean;
     resource: boolean;
+    route: boolean;
 }
 declare global {
     interface Window {
