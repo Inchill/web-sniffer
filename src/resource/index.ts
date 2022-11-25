@@ -2,13 +2,13 @@ import { reportEvent } from '../utils/index'
 
 let loadedResources: PerformanceResourceTiming[] = []
 /** When performace API is not supported by browser */
-let isFirstLoad: boolean = true
-let loadedErrors: ErrorEvent[] = []
-let loadedStyleSheets: StyleSheet[]  = []
-let loadedScripts: HTMLScriptElement[] = []
-let loadedImages: HTMLImageElement[] = []
+let isFirstLoad = true
+const loadedErrors: ErrorEvent[] = []
+const loadedStyleSheets: StyleSheet[]  = []
+const loadedScripts: HTMLScriptElement[] = []
+const loadedImages: HTMLImageElement[] = []
 /** */
-let reportUrl: string = ''
+let reportUrl = ''
 
 export function createResourceMonitor (url: string) {
   reportUrl = url
@@ -22,7 +22,7 @@ export function createResourceMonitor (url: string) {
 }
 
 function resourcePerfWatch () {
-  let entries = performance.getEntriesByType('resource') as PerformanceResourceTiming[]
+  const entries = performance.getEntriesByType('resource') as PerformanceResourceTiming[]
   // filter sendBeacon requests because it's used to post data only so we could ignore.
   loadedResources = entries.filter(entry => entry.initiatorType !== 'beacon')
 
@@ -34,7 +34,7 @@ function resourcePerfWatch () {
   // this API cannot distinguish the status is success or not when resource is loaded, 
   // thus we've to manually filter the failed loadings by listening error.
   const perfObserver = new PerformanceObserver(list => {
-    let _list = list.getEntries() as PerformanceResourceTiming[]
+    const _list = list.getEntries() as PerformanceResourceTiming[]
     loadedResources = _list.filter(entry => entry.initiatorType !== 'beacon')
   })
 
@@ -114,8 +114,8 @@ function filterFailedResources (target: EventTarget | null, type: string, url: s
 function listenOnResourceLoadFailed () {
   window.addEventListener('error', e => {
     // filter js error
-    let target = e.target
-    let isElementTarget = target instanceof HTMLScriptElement
+    const target = e.target
+    const isElementTarget = target instanceof HTMLScriptElement
       || target instanceof HTMLLinkElement
       || target instanceof HTMLImageElement
       || target instanceof HTMLVideoElement
