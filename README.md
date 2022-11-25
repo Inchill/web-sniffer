@@ -7,7 +7,7 @@ A web monitor tool can report data automatically to db before you've provided AP
 - **Resource Monitor**: Monitor resource loading errors including html, js, css and images etc.
 - **Performance Monitor**: Monitor page performance including FP, FCP, LCP, DCL etc.
 - **Network Monitor**: Monitor network.
-- **URL Monitor**: Monitor url changes.
+- **Route Monitor**: Monitor route changes including hash and state changes.
 - **Memory Monitor**: Monitor memory leak.
 - **Custom behaviour Monitor**: Provide custom methods to monitor specific behaviour like PV, UV etc.
 
@@ -58,5 +58,9 @@ If performance API is not supported in the browser, a work around way is combini
 When the page is first to load, onerror handler may be called before onreadystatechange handler and onreadystatechange handler  works only once, so there is a flag to check if the loading errors are first loading.
 
 > **Notice**: Using background-image in css stylesheets to load will not be detected.
+
+### Route
+
+The web monitor will track route changes by default, and it will report the old url and new url.
 
 ## Usage
