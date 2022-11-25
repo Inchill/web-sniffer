@@ -5,7 +5,8 @@
 export interface Config {
   url: string
   jsError: boolean,
-  resource: boolean
+  resource: boolean,
+  route: boolean
 }
 
 declare global {
