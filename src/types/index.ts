@@ -1,6 +1,8 @@
 /**
- * @url api url
- * @domMonitor monitor dom visibility and events
+ * @url report address
+ * @jsError watch js errors
+ * @resource watch resource loading
+ * @route watch route changes
  */
 export interface Config {
   url: string
