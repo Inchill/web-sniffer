@@ -1,7 +1,7 @@
 {
-  "name": "web-monitor",
+  "name": "web-sniffer",
   "version": "1.0.0",
-  "description": "A web monitor tool.",
+  "description": "A web tool for tracking dom events & visibility, javascript runtime errors, resource loading, page performance, network, route changes, memory leaks and custom behavior etc.",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Inchill/web-monitor.git"
+    "url": "git+https://github.com/Inchill/web-sniffer.git"
   },
   "keywords": [
     "web",
@@ -22,9 +22,9 @@
   "author": "chuckliu",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/Inchill/web-monitor/issues"
+    "url": "https://github.com/Inchill/web-sniffer/issues"
   },
-  "homepage": "https://github.com/Inchill/web-monitor#readme",
+  "homepage": "https://github.com/Inchill/web-sniffer#readme",
   "devDependencies": {
     "@babel/core": "^7.20.2",
     "@babel/plugin-transform-runtime": "^7.19.6",
