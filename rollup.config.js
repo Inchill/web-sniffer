@@ -16,11 +16,13 @@ export default [
     output: [
       {
         file: path.resolve(__dirname, `./dist/${pkg.name}.esm.js`),
-        format: 'es'
+        format: 'es',
+        name: 'WebSniffer'
       },
       {
         file: path.resolve(__dirname, `./dist/${pkg.name}.cjs.js`),
-        format: 'cjs'
+        format: 'cjs',
+        name: 'WebSniffer'
       }
     ],
     plugins: [typescript(), terser({
@@ -35,7 +37,7 @@ export default [
     output: {
       file: path.resolve(__dirname, `./dist/${pkg.name}.js`),
       format: 'umd',
-      name: 'WebMonitor'
+      name: 'WebSniffer'
     },
     plugins: [nodeResolve(), typescript(), babel({
       exclude: /node_modules/,
