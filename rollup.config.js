@@ -49,7 +49,7 @@ export default [
     output: {
       file: path.resolve(__dirname, `./dist/${pkg.name}.min.js`),
       format: 'umd',
-      name: 'WebMonitor'
+      name: 'WebSniffer'
     },
     plugins: [
       nodeResolve(),
