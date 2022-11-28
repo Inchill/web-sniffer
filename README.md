@@ -27,14 +27,14 @@ npm i web-sniffer
 ### From a CDN
 
 ```html
-<script src="https://unpkg.com/web-sniffer@1.0.0/dist/web-sniffer.min.js"></script>
+<script src="https://unpkg.com/web-sniffer@1.0.2/dist/web-sniffer.min.js"></script>
 ```
 
 Or
 
 ```html
 <script type="module">
-  import WebSniffer from 'https://unpkg.com/web-sniffer@1.0.0/dist/web-sniffer.esm.js'
+  import WebSniffer from 'https://unpkg.com/web-sniffer@1.0.2/dist/web-sniffer.esm.js'
 </script>
 ```
 ## Usage
@@ -143,8 +143,8 @@ let ws = new WebSniffer({
 })
 ```
 
-By default, the web monitor will catch js errors, including synchronous errors and asynchronous errors such as promise unhandledrejection.
-If you don't want to monitor js errors, just set `jsError` to false in the configuration.
+By default, the `web-sniffer` will catch js errors, including synchronous errors and asynchronous errors such as promise unhandledrejection.
+If you don't want to catch js errors, just set `jsError` to false in the configuration.
 
 ### Resource loading
 
