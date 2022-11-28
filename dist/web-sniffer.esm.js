@@ -1,5 +1,3 @@
-"use strict";
-
 function e(e, t, n, o) {
     const r = {
         key: t,
@@ -12,8 +10,8 @@ function e(e, t, n, o) {
 
 class t {
     constructor(e, t) {
-        this.url = e, this.domConfig = Object.assign(this.normalizeDomConfig(), t), this.eventMonitor(), 
-        this.visibilityMonitor();
+        this.url = e, this.domConfig = Object.assign(this.normalizeDomConfig(), t), this.eventWatcher(), 
+        this.visibilityWatcher();
     }
     normalizeDomConfig() {
         return {
@@ -24,7 +22,7 @@ class t {
             eventListeners: [ "click" ]
         };
     }
-    eventMonitor() {
+    eventWatcher() {
         if (!1 === this.domConfig.event) {
             return;
         }
@@ -42,7 +40,7 @@ class t {
             });
         }));
     }
-    visibilityMonitor() {
+    visibilityWatcher() {
         const {root: t, threshold: n} = this.domConfig, o = new IntersectionObserver((t => {
             t.forEach((t => {
                 const {intersectionRatio: o, target: r} = t;
@@ -101,14 +99,14 @@ function f(t) {
         });
     }() : document.onreadystatechange = t => {
         if ("complete" === document.readyState) {
-            const n = t.target, {styleSheets: f, scripts: l, images: u} = n;
+            const n = t.target, {styleSheets: f, scripts: h, images: l} = n;
             for (const e of f) {
                 e.href && i.push(e);
             }
-            for (const e of l) {
+            for (const e of h) {
                 e.src && s.push(e);
             }
-            for (const e of u) {
+            for (const e of l) {
                 e.src && a.push(e);
             }
             r.forEach((t => {
@@ -136,7 +134,7 @@ function f(t) {
     };
 }
 
-function l(t) {
+function h(t) {
     window.onhashchange = function(n) {
         const {type: o, oldURL: r, newURL: i} = n;
         e(t, o, {
@@ -153,11 +151,11 @@ function l(t) {
                 });
             }));
         }));
-    }([ "pushState", "replaceState" ], t), window.history.pushState = u("pushState"), 
-    window.history.replaceState = u("replaceState");
+    }([ "pushState", "replaceState" ], t), window.history.pushState = l("pushState"), 
+    window.history.replaceState = l("replaceState");
 }
 
-function u(e) {
+function l(e) {
     const t = history[e];
     return function() {
         const n = t.apply(this, arguments), o = new Event(e);
@@ -165,7 +163,7 @@ function u(e) {
     };
 }
 
-module.exports = class {
+class u {
     constructor(t) {
         this.config = Object.assign(this.normalizeConfig(), t), window.$monitorConfig = this.config;
         const {url: n, jsError: o, resource: r, route: i} = this.config;
@@ -183,7 +181,7 @@ module.exports = class {
                     reason: n.reason
                 });
             }));
-        }(n), r && f(n), i && l(n);
+        }(n), r && f(n), i && h(n);
     }
     normalizeConfig() {
         return {
@@ -194,7 +192,9 @@ module.exports = class {
             route: !0
         };
     }
-    createDOMMonitor(e) {
+    createDomWatcher(e) {
         return new t(this.config.url, e), this;
     }
-};
+}
+
+export { u as default };

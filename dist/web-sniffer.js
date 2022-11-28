@@ -46,7 +46,7 @@
     navigator.sendBeacon(url, blobData);
   }
 
-  function createJsErrorMonitor(url) {
+  function createJsErrorWatcher(url) {
     window.addEventListener('error', function (e) {
       var message = e.message,
         type = e.type,
@@ -71,15 +71,15 @@
   function _unsupportedIterableToArray$1(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$1(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$1(o, minLen); }
   function _arrayLikeToArray$1(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
   var prefix = 'data-event';
-  var DomMonitor = /*#__PURE__*/function () {
-    function DomMonitor(url, domConfig) {
-      _classCallCheck(this, DomMonitor);
+  var DomWatcher = /*#__PURE__*/function () {
+    function DomWatcher(url, domConfig) {
+      _classCallCheck(this, DomWatcher);
       this.url = url;
       this.domConfig = Object.assign(this.normalizeDomConfig(), domConfig);
-      this.eventMonitor();
-      this.visibilityMonitor();
+      this.eventWatcher();
+      this.visibilityWatcher();
     }
-    _createClass(DomMonitor, [{
+    _createClass(DomWatcher, [{
       key: "normalizeDomConfig",
       value: function normalizeDomConfig() {
         return {
@@ -91,8 +91,8 @@
         };
       }
     }, {
-      key: "eventMonitor",
-      value: function eventMonitor() {
+      key: "eventWatcher",
+      value: function eventWatcher() {
         var _this = this;
         if (this.domConfig.event === false) return;
         var root = this.domConfig.root;
@@ -109,8 +109,8 @@
         });
       }
     }, {
-      key: "visibilityMonitor",
-      value: function visibilityMonitor() {
+      key: "visibilityWatcher",
+      value: function visibilityWatcher() {
         var _this2 = this;
         var _this$domConfig = this.domConfig,
           root = _this$domConfig.root,
@@ -154,7 +154,7 @@
         }
       }
     }]);
-    return DomMonitor;
+    return DomWatcher;
   }();
 
   function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
@@ -169,7 +169,7 @@
   var loadedImages = [];
   /** */
   var reportUrl = '';
-  function createResourceMonitor(url) {
+  function createResourceWatcher(url) {
     reportUrl = url;
     listenOnResourceLoadFailed();
     if (window.performance) {
@@ -316,7 +316,7 @@
     });
   }
 
-  function createRouteMonitor(url) {
+  function createRouteWatcher(url) {
     window.onhashchange = function (hash) {
       var type = hash.type,
         oldURL = hash.oldURL,
@@ -355,9 +355,9 @@
     });
   }
 
-  var WebMonitor = /*#__PURE__*/function () {
-    function WebMonitor(config) {
-      _classCallCheck(this, WebMonitor);
+  var WebSniffer = /*#__PURE__*/function () {
+    function WebSniffer(config) {
+      _classCallCheck(this, WebSniffer);
       this.config = Object.assign(this.normalizeConfig(), config);
       window.$monitorConfig = this.config;
       var _this$config = this.config,
@@ -365,11 +365,11 @@
         jsError = _this$config.jsError,
         resource = _this$config.resource,
         route = _this$config.route;
-      jsError && createJsErrorMonitor(url);
-      resource && createResourceMonitor(url);
-      route && createRouteMonitor(url);
+      jsError && createJsErrorWatcher(url);
+      resource && createResourceWatcher(url);
+      route && createRouteWatcher(url);
     }
-    _createClass(WebMonitor, [{
+    _createClass(WebSniffer, [{
       key: "normalizeConfig",
       value: function normalizeConfig() {
         return {
@@ -384,15 +384,15 @@
        * Create a DOM observer
        */
     }, {
-      key: "createDOMMonitor",
-      value: function createDOMMonitor(domConfig) {
-        new DomMonitor(this.config.url, domConfig);
+      key: "createDomWatcher",
+      value: function createDomWatcher(domConfig) {
+        new DomWatcher(this.config.url, domConfig);
         return this;
       }
     }]);
-    return WebMonitor;
+    return WebSniffer;
   }();
 
-  return WebMonitor;
+  return WebSniffer;
 
 }));
