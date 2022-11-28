@@ -5,7 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <script src="../dist/web-monitor.min.js"></script>
+    <!-- <script src="../dist/web-sniffer.min.js"></script> -->
+    <script src="https://unpkg.com/web-sniffer@1.0.0/dist/web-sniffer.min.js"></script>
     <link rel="stylesheet" href="./index.css">
     <link rel="stylesheet" href="./404.css">
   </head>
@@ -29,9 +30,9 @@
     </div>
     <img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/759e2aa805c0461b840e0f0f09ed05fa~tplv-k3u1fbpfcp-zoom-1.image?" alt="">
     <script>
-      new WebMonitor({
+      new WebSniffer({
         url: 'http://127.0.0.1:8080'
-      }).createDOMMonitor({
+      }).createDomWatcher({
         visibilty: true,
         root: document.querySelector('#root'),
         eventListeners: ['click']

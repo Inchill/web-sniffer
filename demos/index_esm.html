@@ -39,13 +39,13 @@
 
 
   <script type="module">
-    import WebMonitor from '../dist/web-monitor.esm.js'
+    import WebSniffer from '../dist/web-sniffer.esm.js'
 
-    new WebMonitor()
-    .createDOMMonitor({
+    new WebSniffer()
+    .createDomWatcher({
       visibilty: true,
       root: document.querySelector('#root')
-    }).createDOMMonitor({
+    }).createDomWatcher({
       visibilty: true,
       root: document.querySelector('#app')
     })
