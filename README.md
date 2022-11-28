@@ -158,7 +158,7 @@ let ws = new WebSniffer({
 In the config the `resource` is set to true by default, and the `web-sniffer` will track the img, script and link resources
 loading, if loaded failed it will report the detail info which has target tag name and url.
 
-> **Notice**: When the page is first to load resources, the web monitor maybe loaded behind the link css stylesheets, in such case the web monitor could not track the failed link loadings.
+> **Notice**: When the page is first to load resources, the `web-sniffer` maybe loaded behind the css stylesheets link, in such case it could not track the failed link loadings.
 
 If performance API is not supported in the browser, a work around way is combining onerror and onreadystatechange handlers.
 When the page is first to load, onerror handler may be called before onreadystatechange handler and onreadystatechange handler  works only once, so there is a flag to check if the loading errors are first loading.
