@@ -6,8 +6,11 @@
   - [From a CDN](#from-a-cdn)
 - [Usage](#usage)
   - [createDomWatcher](#createdomwatcher)
+    - [In Vue](#in-vue)
+    - [In React]()
   - [jsError](#jserror)
   - [resource loading](#resource-loading)
+  - [Performance](#performance)
 
 ## Overview
 
@@ -58,7 +61,78 @@ The `domConfig` has the following configuration items:
 | root | HTMLElement | document.documentElement | Ehe Element or Document whose bounds are used as the bounding box when testing for intersection. |
 | threshold | number | 0.2 | A list of thresholds, sorted in increasing numeric order, where each threshold is a ratio of intersection area to bounding box area of an observed target. Notifications for a target are generated when any of the thresholds are crossed for that target. If no value was passed to the constructor, 0 is used. |
 | event | boolean | true | Dom event detection |
-|  eventListeners | array | ['click'] | Dom events like click, dbclick, mouseenter etc. |
+| eventListeners | array | ['click'] | Dom events like click, dbclick, mouseenter etc. |
+
+#### In Vue
+
+```js
+// App.vue
+import HelloWorld from './components/HelloWorld.vue'
+import WebSniffer from 'web-sniffer/dist/web-sniffer.esm'
+
+export default {
+  name: 'App',
+  components: {
+    HelloWorld
+  },
+  mounted () {
+    let ws = new WebSniffer({
+      url: '//localhost:8081'
+    })
+    ws.createDomWatcher({
+      root: document.documentElement,
+      event: true,
+      eventListeners: ['click']
+    })
+
+    let img = document.createElement('img')
+    img.src = '//localhost:8081/101.png'
+    document.body.appendChild(img)
+  }
+}
+```
+
+```html
+<!-- HelloWorld.vue -->
+<h3 :data-event-click="msg" :data-expose="msg">Ecosystem</h3>
+```
+
+Before using custom data attributes, you have to register event type in `eventListeners`. Using data attributes can avoid the third javascript frameworks filtering custom directives.
+
+> **Notice**: The prefix `data-event-` should always concat event `type` so it could work correctly.
+
+#### In React
+
+```jsx
+// App.js
+import Hello from './components/hello'
+function App () {
+  useEffect(() => {
+    let ws = new webSnifferEsm({
+      url: '//localhost:3000'
+    })
+    
+    ws.createDomWatcher({
+      root: document.documentElement
+    })
+  }, [])
+
+  return (
+    <div className="App" data-expose="App show">
+      <Hello/>
+    </div>
+  )
+}
+```
+
+```jsx
+// Hello.js
+export default function Hello () {
+  return (
+    <h1 data-expose="hello world" data-event-click="clicked me">hello world</h1>
+  )
+}
+```
 
 ### JsError
 
