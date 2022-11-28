@@ -1,14 +1,14 @@
 import { Config, DOMConfig } from './types/index'
-import { createJsErrorMonitor } from './js/index'
-import DomMonitor from './dom/index'
-import { createResourceMonitor } from './resource/index'
-import { createRouteMonitor } from './route/index'
-export default class WebMonitor {
+import { createJsErrorWatcher } from './js/index'
+import DomWatcher from './dom/index'
+import { createResourceWatcher } from './resource/index'
+import { createRouteWatcher } from './route/index'
+export default class WebSniffer {
   public config: Config
 
   constructor(config: Config) {
     this.config = Object.assign(this.normalizeConfig(), config)
-    window.$monitorConfig = this.config
+    window.$snifferConfig = this.config
 
     const {
       url,
@@ -17,17 +17,16 @@ export default class WebMonitor {
       route
     } = this.config
 
-    jsError && createJsErrorMonitor(url)
-    resource && createResourceMonitor(url)
-    route && createRouteMonitor(url)
+    jsError && createJsErrorWatcher(url)
+    resource && createResourceWatcher(url)
+    route && createRouteWatcher(url)
   }
 
   private normalizeConfig() {
     return <Config>{
-      domMonitor: false,
+      url: '',
       jsError: true,
       resource: true,
-      url: '',
       route: true
     }
   }
@@ -35,8 +34,8 @@ export default class WebMonitor {
   /**
    * Create a DOM observer
    */
-  public createDOMMonitor(domConfig: DOMConfig) {
-    new DomMonitor(this.config.url, domConfig)
+  public createDomWatcher(domConfig: DOMConfig) {
+    new DomWatcher(this.config.url, domConfig)
     return this
   }
 }

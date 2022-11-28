@@ -3,28 +3,28 @@ import { reportEvent } from '../utils/index'
 
 const prefix = 'data-event'
 
-export default class DomMonitor {
+export default class DomWatcher {
   private domConfig: DOMConfig
   private url: string
 
   constructor (url: string, domConfig: DOMConfig) {
     this.url = url
     this.domConfig = Object.assign(this.normalizeDomConfig(), domConfig)
-    this.eventMonitor()
-    this.visibilityMonitor()
+    this.eventWatcher()
+    this.visibilityWatcher()
   }
 
   private normalizeDomConfig() {
     return <DOMConfig>{
       visibility: true,
-      root: null,
+      root: document.documentElement,
       threshold: 0.2,
       event: true,
       eventListeners: ['click']
     }
   }
 
-  private eventMonitor() {
+  private eventWatcher() {
     if (this.domConfig.event === false) return
 
     const { root } = this.domConfig
@@ -47,7 +47,7 @@ export default class DomMonitor {
     })
   }
 
-  private visibilityMonitor() {
+  private visibilityWatcher() {
     const { root, threshold } = this.domConfig
 
     const observer = new IntersectionObserver(

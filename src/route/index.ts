@@ -1,6 +1,6 @@
 import { reportEvent } from '../utils/index'
 
-export function createRouteMonitor (url: string) {
+export function createRouteWatcher (url: string) {
   window.onhashchange = function (hash: HashChangeEvent) {
     const {
       type,

@@ -1,6 +1,6 @@
 import { reportEvent } from '../utils/index'
 
-export function createJsErrorMonitor (url: string) {
+export function createJsErrorWatcher (url: string) {
   window.addEventListener('error', e => {
     const {
       message,

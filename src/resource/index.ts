@@ -10,9 +10,9 @@ const loadedImages: HTMLImageElement[] = []
 /** */
 let reportUrl = ''
 
-export function createResourceMonitor (url: string) {
+export function createResourceWatcher (url: string) {
   reportUrl = url
-  listenOnResourceLoadFailed()
+  onResourceLoadFailed()
 
   if (window.performance) {
     resourcePerfWatch()
@@ -111,7 +111,7 @@ function filterFailedResources (target: EventTarget | null, type: string, url: s
   })
 }
 
-function listenOnResourceLoadFailed () {
+function onResourceLoadFailed () {
   window.addEventListener('error', e => {
     // filter js error
     const target = e.target
