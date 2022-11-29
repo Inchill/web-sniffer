@@ -1,6 +1,6 @@
 {
   "name": "web-sniffer",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A web tool for tracking dom events & visibility, javascript runtime errors, resource loading, page performance, network, route changes, memory leaks and custom behavior etc.",
   "main": "src/index.js",
   "type": "module",
