@@ -1,7 +1,8 @@
 import { DOMConfig } from '../types/index'
 import { reportEvent } from '../utils/index'
 
-const prefix = 'data-event'
+const eventPrefix = 'data-event'
+const exposePrefix = 'data-expose'
 
 export default class DomWatcher {
   private domConfig: DOMConfig
@@ -36,8 +37,9 @@ export default class DomWatcher {
         eventType,
         (e) => {
           const target = e.target as HTMLElement
-          if (!target.hasAttribute(`${prefix}-${eventType}`)) return
-          const value = target.getAttribute(`${prefix}-${eventType}`) || ''
+          if (!target.hasAttribute(`${eventPrefix}`)) return
+
+          const value = target.getAttribute(`${eventPrefix}`) || ''
           reportEvent(this.url, eventType, value)
         },
         {
@@ -55,10 +57,10 @@ export default class DomWatcher {
         entries.forEach((entry) => {
           const { intersectionRatio, target } = entry
 
-          if (!target.hasAttribute('data-expose')) return
+          if (!target.hasAttribute(`${exposePrefix}`)) return
 
           if (intersectionRatio >= threshold) {
-            const value = target.getAttribute('data-expose') || ''
+            const value = target.getAttribute(`${exposePrefix}`) || ''
             reportEvent(this.url, 'expose', value)
           }
         })
@@ -79,7 +81,7 @@ export default class DomWatcher {
     if (!root) return
 
     for (const node of root.children) {
-      if (node.hasAttribute('data-expose')) {
+      if (node.hasAttribute(`${exposePrefix}`)) {
         observer.observe(node)
       }
 
