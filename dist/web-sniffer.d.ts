@@ -1,6 +1,8 @@
 /**
- * @url api url
- * @domMonitor monitor dom visibility and events
+ * @url report address
+ * @jsError watch js errors
+ * @resource watch resource loading
+ * @route watch route changes
  */
 interface Config {
     url: string;
@@ -10,7 +12,7 @@ interface Config {
 }
 declare global {
     interface Window {
-        $monitorConfig: Config;
+        $snifferConfig: Config;
     }
 }
 interface DOMConfig {

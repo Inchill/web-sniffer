@@ -18,7 +18,7 @@ class t {
     normalizeDomConfig() {
         return {
             visibility: !0,
-            root: null,
+            root: document.documentElement,
             threshold: .2,
             event: !0,
             eventListeners: [ "click" ]
@@ -32,10 +32,10 @@ class t {
         t && this.domConfig.eventListeners.forEach((n => {
             t.addEventListener(n, (t => {
                 const o = t.target;
-                if (!o.hasAttribute(`data-event-${n}`)) {
+                if (!o.hasAttribute("data-event")) {
                     return;
                 }
-                const r = o.getAttribute(`data-event-${n}`) || "";
+                const r = o.getAttribute("data-event") || "";
                 e(this.url, n, r);
             }), {
                 capture: !0
@@ -167,7 +167,7 @@ function l(e) {
 
 module.exports = class {
     constructor(t) {
-        this.config = Object.assign(this.normalizeConfig(), t), window.$monitorConfig = this.config;
+        this.config = Object.assign(this.normalizeConfig(), t), window.$snifferConfig = this.config;
         const {url: n, jsError: o, resource: r, route: i} = this.config;
         o && function(t) {
             window.addEventListener("error", (n => {
@@ -187,10 +187,9 @@ module.exports = class {
     }
     normalizeConfig() {
         return {
-            domMonitor: !1,
+            url: "",
             jsError: !0,
             resource: !0,
-            url: "",
             route: !0
         };
     }
