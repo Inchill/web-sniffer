@@ -8,9 +8,9 @@
   - [createDomWatcher](#createdomwatcher)
     - [In Vue](#in-vue)
     - [In React]()
-  - [jsError](#jserror)
-  - [resource loading](#resource-loading)
-  - [Performance](#performance)
+  - [createJsErrorWatcher](#createjserrorwatcher)
+  - [createResourceWatcher](#createresourcewatcher)
+  - [createRouteWatcher](#createroutewatcher)
 
 ## Overview
 
@@ -27,14 +27,17 @@ npm i web-sniffer
 ### From a CDN
 
 ```html
-<script src="https://unpkg.com/web-sniffer@1.0.2/dist/web-sniffer.min.js"></script>
+<script src="https://unpkg.com/web-sniffer@1.0.4/dist/web-sniffer.min.js"></script>
 ```
 
 Or
 
 ```html
 <script type="module">
-  import WebSniffer from 'https://unpkg.com/web-sniffer@1.0.2/dist/web-sniffer.esm.js'
+  import { createDomWatcher } from 'https://unpkg.com/web-sniffer@1.0.4/dist/web-sniffer.esm.js'
+  createDomWatcher({
+    visibility: true
+  }, console.log)
 </script>
 ```
 ## Usage
@@ -42,15 +45,24 @@ Or
 ### createDomWatcher
 
 ```js
-let ws = new WebSniffer({
-  url: '' // An address to report data
-})
+const reportCallback = (data) => {
+  const body = JSON.stringify(data);
+  const url = 'http://127.0.0.1:8080/analytics';
 
-const domConfig = {
-  root: document.documentElement
+  // Use `navigator.sendBeacon()` if available, falling back to `fetch()`
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon(url, body);
+  } else {
+    fetch(url, { body, method: 'POST', keepalive: true });
+  }
 }
 
-ws.createDomWatcher(domConfig)
+const domConfig = {
+  visibility: true,
+  event: true
+}
+
+createDomWatcher(domConfig, reportCallback)
 ```
 
 The `domConfig` has the following configuration items:
@@ -58,7 +70,7 @@ The `domConfig` has the following configuration items:
 | name | type | default | description |
 | ---- | ----- | ------ | ----------- |
 | visibility | boolean | true | Dom visibility detection |
-| root | HTMLElement | document.documentElement | Ehe Element or Document whose bounds are used as the bounding box when testing for intersection. |
+| root | HTMLElement | document.documentElement | The Element or Document whose bounds are used as the bounding box when testing for intersection. |
 | threshold | number | 0.2 | A list of thresholds, sorted in increasing numeric order, where each threshold is a ratio of intersection area to bounding box area of an observed target. Notifications for a target are generated when any of the thresholds are crossed for that target. If no value was passed to the constructor, 0 is used. |
 | event | boolean | true | Dom event detection |
 | eventListeners | array | ['click'] | Dom events like click, dbclick, mouseenter etc. |
@@ -68,7 +80,7 @@ The `domConfig` has the following configuration items:
 ```js
 // App.vue
 import HelloWorld from './components/HelloWorld.vue'
-import WebSniffer from 'web-sniffer/dist/web-sniffer.esm'
+import { createDomWatcher, createResourceWatcher } from 'web-sniffer/dist/web-sniffer.esm'
 
 export default {
   name: 'App',
@@ -76,18 +88,29 @@ export default {
     HelloWorld
   },
   mounted () {
-    let ws = new WebSniffer({
-      url: '//localhost:8081'
-    })
-    ws.createDomWatcher({
-      root: document.documentElement,
-      event: true,
-      eventListeners: ['click']
-    })
+    createDomWatcher({
+      visibility: true,
+      event: true
+    }, this.reportCallback)
+
+    createResourceWatcher(this.reportCallback)
 
     let img = document.createElement('img')
     img.src = '//localhost:8081/101.png'
     document.body.appendChild(img)
+  },
+  methods: {
+    reportCallback: (data) => {
+      const body = JSON.stringify(data);
+      const url = 'http://127.0.0.1:8080/analytics';
+
+      // Use `navigator.sendBeacon()` if available, falling back to `fetch()`
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(url, body);
+      } else {
+        fetch(url, { body, method: 'POST', keepalive: true });
+      }
+    }
   }
 }
 ```
@@ -97,30 +120,43 @@ export default {
 <h3 :data-event="msg" :data-expose="msg">Ecosystem</h3>
 ```
 
-Before using custom data attributes, you have to register event type in `eventListeners`. Using data attributes can avoid the third javascript frameworks filtering custom directives.
+Before using custom data attributes, you have to register event type in `eventListeners`. Using data attributes can avoid the third-party javascript frameworks filtering custom directives.
 
 #### In React
 
 ```jsx
 // App.js
+import { createDomWatcher } from 'web-sniffer/dist/web-sniffer.esm';
 import Hello from './components/hello'
-function App () {
+
+function App() {
+  const reportCallback = (data) => {
+    const body = JSON.stringify(data);
+    const url = 'http://127.0.0.1:8080/analytics';
+
+    // Use `navigator.sendBeacon()` if available, falling back to `fetch()`
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(url, body);
+    } else {
+      fetch(url, { body, method: 'POST', keepalive: true });
+    }
+  }
+
   useEffect(() => {
-    let ws = new webSnifferEsm({
-      url: '//localhost:3000'
-    })
-    
-    ws.createDomWatcher({
-      root: document.documentElement
-    })
+    createDomWatcher({
+      visibility: true,
+      event: true
+    }, reportCallback)
   }, [])
 
   return (
     <div className="App" data-expose="App show">
       <Hello/>
     </div>
-  )
+  );
 }
+
+export default App;
 ```
 
 ```jsx
@@ -132,29 +168,26 @@ export default function Hello () {
 }
 ```
 
-### JsError
+### createJsErrorWatcher
 
 ```js
-let ws = new WebSniffer({
-  url: '', // An address to report data
-  jsError: true
-})
+import { createJsErrorWatcher } from 'web-sniffer/dist/web-sniffer.esm'
+
+createJsErrorWatcher(console.log)
 ```
 
-By default, the `web-sniffer` will catch js errors, including synchronous errors and asynchronous errors such as promise unhandledrejection.
-If you don't want to catch js errors, just set `jsError` to false in the configuration.
+The `web-sniffer` will catch js errors, including synchronous errors and asynchronous errors such as promise unhandledrejection.
+You can pass on a callback function to handle captured errors.
 
-### Resource loading
+### createResourceWatcher
 
 ```js
-let ws = new WebSniffer({
-  url: '', // An address to report data
-  resource: true
-})
+import { createResourceWatcher } from 'web-sniffer/dist/web-sniffer.esm'
+
+createResourceWatcher(console.log)
 ```
 
-In the config the `resource` is set to true by default, and the `web-sniffer` will track the img, script and link resources
-loading, if loaded failed it will report the detail info which has target tag name and url.
+The `web-sniffer` will track the img, script and link resources loading, if loaded failed it will report the target info which has tag name and url.
 
 > **Notice**: When the page is first to load resources, the `web-sniffer` maybe loaded behind the css stylesheets link, in such case it could not track the failed link loadings.
 
@@ -163,16 +196,15 @@ When the page is first to load, onerror handler may be called before onreadystat
 
 > **Notice**: Using background-image to load would not be detected.
 
-### Route
+### createRouteWatcher
 
 ```js
-let ws = new WebSniffer({
-  url: '', // An address to report data
-  route: true
-})
+import { createRouteWatcher } from 'web-sniffer/dist/web-sniffer.esm'
+
+createRouteWatcher(console.log)
 ```
 
-This will track route changes by default, and report the old url and new url.
+It will detect hash and history change, you can pass on a callback function to handle the detail info which contains oldURL and newURL.
 
 ### Performance
 
