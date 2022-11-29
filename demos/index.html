@@ -29,13 +29,27 @@
     </div>
     <img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/759e2aa805c0461b840e0f0f09ed05fa~tplv-k3u1fbpfcp-zoom-1.image?" alt="">
     <script>
-      new WebSniffer({
-        url: 'http://127.0.0.1:8080'
-      }).createDomWatcher({
-        visibilty: true,
+      const reportCallback = (data) => {
+        const body = JSON.stringify(data);
+        const url = 'http://127.0.0.1:8080/analytics';
+
+        // Use `navigator.sendBeacon()` if available, falling back to `fetch()`
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(url, body);
+        } else {
+          fetch(url, { body, method: 'POST', keepalive: true });
+        }
+      }
+
+      WebSniffer.createDomWatcher({
+        visibility: true,
         root: document.querySelector('#root'),
+        event: true,
         eventListeners: ['click']
-      })
+      }, reportCallback)
+
+      WebSniffer.createResourceWatcher(console.log)
+      WebSniffer.createRouteWatcher(console.log)
       
       const inner1 = document.getElementsByClassName('inner1')[0]
       inner1.addEventListener('click', (e) => {

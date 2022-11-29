@@ -39,16 +39,35 @@
 
 
   <script type="module">
-    import WebSniffer from '../dist/web-sniffer.esm.js'
+    import { createJsErrorWatcher, createDomWatcher, createResourceWatcher, createRouteWatcher } from '../dist/web-sniffer.esm.js'
 
-    new WebSniffer()
-    .createDomWatcher({
-      visibilty: true,
-      root: document.querySelector('#root')
-    }).createDomWatcher({
-      visibilty: true,
+    createJsErrorWatcher(console.log)
+
+    const reportCallback = (data) => {
+      const body = JSON.stringify(data);
+      const url = 'http://127.0.0.1:8080/analytics';
+
+      // Use `navigator.sendBeacon()` if available, falling back to `fetch()`
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(url, body);
+      } else {
+        fetch(url, { body, method: 'POST', keepalive: true });
+      }
+    }
+    
+    createDomWatcher({
+      visibility: true,
+      root: document.querySelector('#root'),
+      event: true
+    }, reportCallback)
+    
+    createDomWatcher({
+       visibility: true,
       root: document.querySelector('#app')
-    })
+    }, reportCallback)
+
+    createResourceWatcher(reportCallback)
+    createRouteWatcher(reportCallback)
 
     setTimeout(() => {
       Promise.reject('reject error')

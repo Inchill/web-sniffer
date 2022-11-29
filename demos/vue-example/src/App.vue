@@ -5,7 +5,7 @@
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
-import WebSniffer from 'web-sniffer/dist/web-sniffer.esm'
+import { createDomWatcher, createResourceWatcher } from 'web-sniffer/dist/web-sniffer.esm'
 
 export default {
   name: 'App',
@@ -13,16 +13,29 @@ export default {
     HelloWorld
   },
   mounted () {
-    let ws = new WebSniffer({
-      url: '//localhost:8081'
-    })
-    ws.createDomWatcher({
-      root: document.documentElement
-    })
+    createDomWatcher({
+      visibility: true,
+      event: true
+    }, this.reportCallback)
+
+    createResourceWatcher(this.reportCallback)
 
     let img = document.createElement('img')
     img.src = '//localhost:8081/101.png'
     document.body.appendChild(img)
+  },
+  methods: {
+    reportCallback: (data) => {
+      const body = JSON.stringify(data);
+      const url = 'http://127.0.0.1:8080/analytics';
+
+      // Use `navigator.sendBeacon()` if available, falling back to `fetch()`
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(url, body);
+      } else {
+        fetch(url, { body, method: 'POST', keepalive: true });
+      }
+    }
   }
 }
 </script>
