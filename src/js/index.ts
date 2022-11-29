@@ -1,25 +1,33 @@
-import { reportEvent } from '../utils/index'
+import { JsErrorReportCallback } from '../types/index'
 
-export function createJsErrorWatcher (url: string) {
+export function createJsErrorWatcher (onReport: JsErrorReportCallback) {
+  if (typeof onReport !== 'function') return
+
   window.addEventListener('error', e => {
-    const {
-      message,
-      type,
-      lineno,
-      colno,
-      error
-    } = e
-    reportEvent(url, type, {
-      message,
-      lineno,
-      colno,
-      stack: error.stack
-    })
+    const data = {
+      type: e.type,
+      message: e.message,
+      filename: e.filename,
+      lineno: e.lineno,
+      colno: e.colno
+    }
+    
+    try {
+      onReport(data)
+    } catch {
+      // Do nothing.
+    }
   })
 
   window.addEventListener('unhandledrejection', e => {
-    reportEvent(url, e.type, {
+    const data = {
       reason: e.reason
-    })
+    }
+    
+    try {
+      onReport(data)
+    } catch {
+      // Do nothing.
+    }
   })
 }
