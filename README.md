@@ -94,12 +94,10 @@ export default {
 
 ```html
 <!-- HelloWorld.vue -->
-<h3 :data-event-click="msg" :data-expose="msg">Ecosystem</h3>
+<h3 :data-event="msg" :data-expose="msg">Ecosystem</h3>
 ```
 
 Before using custom data attributes, you have to register event type in `eventListeners`. Using data attributes can avoid the third javascript frameworks filtering custom directives.
-
-> **Notice**: The prefix `data-event-` should always concat event `type` so it could work correctly.
 
 #### In React
 
@@ -129,7 +127,7 @@ function App () {
 // Hello.js
 export default function Hello () {
   return (
-    <h1 data-expose="hello world" data-event-click="clicked me">hello world</h1>
+    <h1 data-expose="hello world" data-event="clicked me">hello world</h1>
   )
 }
 ```
@@ -177,3 +175,9 @@ let ws = new WebSniffer({
 This will track route changes by default, and report the old url and new url.
 
 ### Performance
+
+### Network
+
+### Memory
+
+### Behavior
