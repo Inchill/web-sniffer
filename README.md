@@ -69,10 +69,10 @@ The `domConfig` has the following configuration items:
 
 | name | type | default | description |
 | ---- | ----- | ------ | ----------- |
-| visibility | boolean | true | Dom visibility detection |
+| visibility | boolean | false | Dom visibility detection |
 | root | HTMLElement | document.documentElement | The Element or Document whose bounds are used as the bounding box when testing for intersection. |
 | threshold | number | 0.2 | A list of thresholds, sorted in increasing numeric order, where each threshold is a ratio of intersection area to bounding box area of an observed target. Notifications for a target are generated when any of the thresholds are crossed for that target. If no value was passed to the constructor, 0 is used. |
-| event | boolean | true | Dom event detection |
+| event | boolean | false | Dom event detection |
 | eventListeners | array | ['click'] | Dom events like click, dbclick, mouseenter etc. |
 
 #### In Vue
