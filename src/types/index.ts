@@ -1,26 +1,13 @@
-/**
- * @url report address
- * @jsError watch js errors
- * @resource watch resource loading
- * @route watch route changes
- */
-export interface Config {
-  url: string
-  jsError: boolean,
-  resource: boolean,
-  route: boolean
+export interface WebSniffer {
+  version: string
 }
-
 declare global {
   interface Window {
-    $snifferConfig: Config
+    WebSniffer: WebSniffer
   }
 }
 
-export interface DOMConfig {
-  visibility: boolean
-  root: HTMLElement | null
-  threshold: number
-  event: boolean
-  eventListeners: string[]
-}
+export * from './js'
+export * from './dom'
+export * from './resource'
+export * from './route'
