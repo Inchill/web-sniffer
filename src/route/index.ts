@@ -1,20 +1,19 @@
-import { reportEvent } from '../utils/index'
+import { RouteReportCallback } from '../types/index'
 
-export function createRouteWatcher (url: string) {
+export function createRouteWatcher (onReport: RouteReportCallback) {
   window.onhashchange = function (hash: HashChangeEvent) {
     const {
-      type,
       oldURL,
       newURL
     } = hash
 
-    reportEvent(url, type, {
+    onReport({
       oldURL,
       newURL
     })
   }
 
-  onEvents(['pushState', 'replaceState'], url)
+  onEvents(['pushState', 'replaceState'], onReport)
 
   window.history.pushState = createHistoryEvent('pushState')
   window.history.replaceState = createHistoryEvent('replaceState')
@@ -31,14 +30,14 @@ function createHistoryEvent <T extends keyof History>(type: T) {
   }
 }
 
-function onEvents (events: string[], url: string) {
+function onEvents (events: string[], onReport: RouteReportCallback) {
   events.forEach(event => {
     window.addEventListener(event, (evt: Event) => {
       const target = evt.target as Window
       const { href, origin } = target.location
-      reportEvent(url, evt.type, {
-        href,
-        origin
+      onReport({
+        newURL: href,
+        oldURL: origin
       })
     })
   })
