@@ -30,7 +30,7 @@ export default class DomWatcher {
 
     const { root } = this.domConfig
 
-    if (!root) return
+    if (!root || !(root instanceof HTMLElement)) return
 
     this.domConfig.eventListeners.forEach((eventType) => {
       root.addEventListener(
