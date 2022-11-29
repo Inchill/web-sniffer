@@ -204,7 +204,7 @@ import { createRouteWatcher } from 'web-sniffer/dist/web-sniffer.esm'
 createRouteWatcher(console.log)
 ```
 
-It will detect hash and history change, you can pass on a callback function to handle the detail info which contains oldURL and newURL.
+It will detect hash and history changes, you can pass on a callback function to handle the detail info which contains oldURL and newURL.
 
 ### Performance
 
