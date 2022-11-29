@@ -1,33 +1,31 @@
-import { DOMConfig } from '../types/index'
-import { reportEvent } from '../utils/index'
+import { DomConfig, DomReportCallback } from '../types/index'
 
 const eventPrefix = 'data-event'
 const exposePrefix = 'data-expose'
 
-export default class DomWatcher {
-  private domConfig: DOMConfig
-  private url: string
+class DomWatcher {
+  private domConfig: DomConfig
+  private onReport: DomReportCallback
 
-  constructor (url: string, domConfig: DOMConfig) {
-    this.url = url
+  constructor (domConfig: DomConfig, onReport: DomReportCallback) {
     this.domConfig = Object.assign(this.normalizeDomConfig(), domConfig)
-    this.eventWatcher()
-    this.visibilityWatcher()
+    this.onReport = onReport
+
+    this.domConfig.visibility && this.visibilityWatcher()
+    this.domConfig.event && this.eventWatcher()
   }
 
   private normalizeDomConfig() {
-    return <DOMConfig>{
-      visibility: true,
+    return <DomConfig>{
+      visibility: false,
       root: document.documentElement,
       threshold: 0.2,
-      event: true,
+      event: false,
       eventListeners: ['click']
     }
   }
 
   private eventWatcher() {
-    if (this.domConfig.event === false) return
-
     const { root } = this.domConfig
 
     if (!root || !(root instanceof HTMLElement)) return
@@ -40,7 +38,17 @@ export default class DomWatcher {
           if (!target.hasAttribute(`${eventPrefix}`)) return
 
           const value = target.getAttribute(`${eventPrefix}`) || ''
-          reportEvent(this.url, eventType, value)
+
+          const data = {
+            key: eventType,
+            value
+          }
+
+          try {
+            this.onReport(data)
+          } catch {
+            // Do nothing.
+          }
         },
         {
           capture: true
@@ -61,7 +69,17 @@ export default class DomWatcher {
 
           if (intersectionRatio >= threshold) {
             const value = target.getAttribute(`${exposePrefix}`) || ''
-            reportEvent(this.url, 'expose', value)
+
+            const data = {
+              key: 'expose',
+              value
+            }
+            
+            try {
+              this.onReport(data)
+            } catch {
+              // Do nothing.
+            }
           }
         })
       },
@@ -90,4 +108,14 @@ export default class DomWatcher {
       }
     }
   }
+}
+
+/**
+ * 
+ * @param domConfig A specific dom configuration.
+ * @param onReport A dom visibility change and event report callback function.
+ * @returns A domWatcher instance.
+ */
+export function createDomWatcher (domConfig: DomConfig, onReport: DomReportCallback) {
+  return new DomWatcher(domConfig, onReport)
 }
