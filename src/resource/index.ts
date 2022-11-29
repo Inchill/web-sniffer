@@ -1,4 +1,4 @@
-import { reportEvent } from '../utils/index'
+import { ResourceReportCallback, ResourceDetail } from '../types/index'
 
 let loadedResources: PerformanceResourceTiming[] = []
 /** When performace API is not supported by browser */
@@ -8,10 +8,10 @@ const loadedStyleSheets: StyleSheet[]  = []
 const loadedScripts: HTMLScriptElement[] = []
 const loadedImages: HTMLImageElement[] = []
 /** */
-let reportUrl = ''
+let onReportFn: ResourceReportCallback
 
-export function createResourceWatcher (url: string) {
-  reportUrl = url
+export function createResourceWatcher (onReport: ResourceReportCallback) {
+  onReportFn = onReport
   onResourceLoadFailed()
 
   if (window.performance) {
@@ -86,27 +86,42 @@ function listenOnload () {
 function filterFailedResources (target: EventTarget | null, type: string, url: string) {
   target instanceof HTMLLinkElement && loadedStyleSheets.forEach(resource => {
     if (resource.href === url) {
-      reportEvent(reportUrl, type, {
-        target: target.tagName.toLowerCase(),
+      const data: ResourceDetail = {
+        tagName: target.tagName.toLowerCase(),
         url
-      })
+      }
+      try {
+        onReportFn(data)
+      } catch {
+        // Do nothing.
+      }
     }
   })
 
   target instanceof HTMLScriptElement && loadedScripts.forEach(resource => {
     if (resource.src === url) {
-      reportEvent(reportUrl, type, {
-        target: target.tagName.toLowerCase(),
+      const data: ResourceDetail = {
+        tagName: target.tagName.toLowerCase(),
         url
-      })
+      }
+      try {
+        onReportFn(data)
+      } catch {
+        // Do nothing.
+      }
     }
   })
   target instanceof HTMLImageElement && loadedImages.forEach(resource => {
     if (resource.src === url) {
-      reportEvent(reportUrl, type, {
-        target: target.tagName.toLowerCase(),
+      const data: ResourceDetail = {
+        tagName: target.tagName.toLowerCase(),
         url
-      })
+      }
+      try {
+        onReportFn(data)
+      } catch {
+        // Do nothing.
+      }
     }
   })
 }
@@ -134,10 +149,15 @@ function onResourceLoadFailed () {
     if (window.performance) {
       loadedResources.forEach(resource => {
         if (resource.name === url) {
-          reportEvent(reportUrl, e.type, {
-            target: resource.initiatorType,
+          const data: ResourceDetail = {
+            tagName: resource.initiatorType,
             url
-          })
+          }
+          try {
+            onReportFn(data)
+          } catch {
+            // Do nothing.
+          }
         }
       })
 
@@ -146,10 +166,15 @@ function onResourceLoadFailed () {
       if (isFirstLoad) {
         loadedErrors.push(e)
       } else {
-        reportEvent(reportUrl, e.type, {
-          target: (e.target as HTMLElement).tagName.toLowerCase(),
+        const data: ResourceDetail = {
+          tagName: (e.target as HTMLElement).tagName.toLowerCase(),
           url
-        })
+        }
+        try {
+          onReportFn(data)
+        } catch {
+          // Do nothing.
+        }
       }
     }
   }, {
