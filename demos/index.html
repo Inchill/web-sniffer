@@ -5,15 +5,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <!-- <script src="../dist/web-sniffer.min.js"></script> -->
-    <script src="https://unpkg.com/web-sniffer@1.0.0/dist/web-sniffer.min.js"></script>
+    <script src="../dist/web-sniffer.min.js"></script>
     <link rel="stylesheet" href="./index.css">
     <link rel="stylesheet" href="./404.css">
   </head>
   <body>
     <div id="root">
       <div class="box" data-expose="1001_box_show">
-        <div class="inner1" data-event-click="{ clickId: 1 }" data-event-mouseenter="mouseenter">inner1</div>
+        <div class="inner1" data-event="{ clickId: 1 }">inner1</div>
         <div
           class="inner2"
           data-event="2022"
@@ -22,7 +21,7 @@
           inner2
         <a
           href="www.baidu.com"
-          data-event-click="alink_clicked"
+          data-event="alink_clicked"
           onclick="clickHandler(event)"
           >click me</a
         >
