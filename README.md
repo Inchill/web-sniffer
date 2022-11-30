@@ -187,7 +187,7 @@ import { createResourceWatcher } from 'web-sniffer/dist/web-sniffer.esm'
 createResourceWatcher(console.log)
 ```
 
-The `web-sniffer` will track the img, script and link resources loading, if loaded failed it will report the target info which has tag name and url.
+The `web-sniffer` will track the img, script, link, audio and video resources loading, if loaded failed it will report the target info which has tag name and resource url.
 
 > **Notice**: When the page is first to load resources, the `web-sniffer` maybe loaded behind the css stylesheets link, in such case it could not track the failed link loadings.
 
